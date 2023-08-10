@@ -78,29 +78,29 @@ const {Group,GroupImage,Venue,Event} = require('../../db/models')
     });
 
 //add an image to a group
-// router.post('/:groupId/images',async (req, res) => {
-//     const groupId = req.params.groupId;
-//     const { url, preview } = req.body;
+router.post('/:groupId/images',async (req, res) => {
+    const groupId = req.params.groupId;
+    const { url, preview } = req.body;
 
-//     const group = await Group.findByPk(groupId);
-//     if (!group) {
-//       return res.status(404).json({ message: "Group couldn't be found"});
-//     }
+    const group = await Group.findByPk(groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Group couldn't be found"});
+    }
 
-//     // Create the image for the group
-//     const image = await GroupImage.create({
-//       groupId,
-//       url,
-//       preview,
-//     });
+    // Create the image for the group
+    const image = await GroupImage.create({
+      groupId,
+      url,
+      preview,
+    });
 
-//     return res.json({
-//       id: image.id,
-//       url: image.url,
-//       preview: image.preview,
-//     });
+    return res.json({
+      id: image.id,
+      url: image.url,
+      preview: image.preview,
+    });
 
-// })
+})
 
 // router.put('/:groupId', async (req, res) => {
 //     const groupId = req.params.groupId;
