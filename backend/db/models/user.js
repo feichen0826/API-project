@@ -14,8 +14,10 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Attendance,{
         foreignKey:'userId'
       })
-      User.hasMany(models.Group,{
-        foreignKey:'userId'
+      User.belongsToMany(models.Group,{
+        through:models.Membership,
+        foreignKey:'userId',
+        otherKey:'groupId'
       })
       User.hasMany(models.Membership,{
         foreignKey:'userId'

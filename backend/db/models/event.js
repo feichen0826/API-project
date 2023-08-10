@@ -14,9 +14,8 @@ module.exports = (sequelize, DataTypes) => {
 
       Event.hasMany(models.EventImage,{
         foreignKey:'eventId',
-        onDelete:'CASCADE',
-        hooks:true,
       })
+
       Event.belongsToMany(models.User,{
         through:models.Attendance,
         foreignKey:'eventId',
@@ -29,18 +28,18 @@ module.exports = (sequelize, DataTypes) => {
 
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    type: DataTypes.ENUM,
+    type: DataTypes.ENUM('Online', 'In person'),
     capacity: DataTypes.INTEGER,
-    price: DataTypes.INTEGER,
+    price: DataTypes.DECIMAL,
     startDate: DataTypes.DATE,
     endDate: DataTypes.DATE,
     venueId:{
       type:DataTypes.INTEGER,
-      allowNull:false
+
     },
     groupId:{
       type:DataTypes.INTEGER,
-      allowNull:false
+
     }
   }, {
     sequelize,

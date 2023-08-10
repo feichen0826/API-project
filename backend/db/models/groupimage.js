@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     groupId: {
       type:DataTypes.INTEGER,
       allowNull:false
-    }
+    },
     url: DataTypes.STRING,
     preview: DataTypes.BOOLEAN
   }, {
