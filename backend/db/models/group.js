@@ -21,12 +21,12 @@ module.exports = (sequelize, DataTypes) => {
         otherKey:'venueId',
 
       })
-      Group.belongsToMany(models.User,{
-        through:models.Membership,
+      Group.hasMany(models.Membership,{
         foreignKey:'groupId',
-        otherKey:'userId',
-
+        onDelete:'CASCADE',
+        hooks:true,
       })
+
       Group.hasMany(models.Venue,{
         foreignKey:'groupId',
         onDelete:'CASCADE',

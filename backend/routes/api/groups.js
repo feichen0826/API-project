@@ -98,10 +98,51 @@ const validateMembership = [
   // Get all Groups
   router.get('/', async (req, res) => {
 
-      const groups = await Group.findAll();
-      return res.json(groups);
+      const groups = await Group.findAll({
+        include:[{
+          model:Membership,
+        },{
+          model:GroupImage
+        }]
+      });
+      let url;
+      for(let i = 0; i < groups.length; i++){
 
-  });
+        const groupImage =  await GroupImage.findAll({
+          where:{
+            groupId:groups[i].id
+          }
+        })
+        for(let j= 0 ; j < groupImage.length; j++){
+         url = groupImage[i].url
+
+        }
+
+      }
+
+
+        const formattedGroups = groups.map(group => ({
+          id: group.id,
+          organizerId: group.organizerId,
+          name: group.name,
+          about: group.about,
+          type: group.type,
+          private: group.private,
+          city: group.city,
+          state: group.state,
+          createdAt: group.createdAt,
+          updatedAt: group.updatedAt,
+          numMembers: group.Memberships.length,
+          previewImage: url
+
+        })
+        );
+
+
+        res.status(200).json({ Groups: formattedGroups });
+
+      })
+
 
   // Get all Groups joined or organized by the Current User
   router.get('/current', async (req, res) => {
@@ -110,6 +151,11 @@ const validateMembership = [
 
       //const previewImage = await Group.getPreviewImage()
       const group = await Group.findAll({
+        include:[{
+          model:Membership,
+        },{
+          model:GroupImage
+        }],
         where: {
            organizerId: req.user.id
         }
@@ -120,7 +166,21 @@ const validateMembership = [
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const groupList = {
+    let url;
+    for(let i = 0; i < group.length; i++){
+
+      const groupImage =  await GroupImage.findAll({
+        where:{
+          groupId:group[i].id
+        }
+      })
+      for(let j= 0 ; j < groupImage.length; j++){
+       url = groupImage[i].url
+
+      }
+
+    }
+    const groupList = group.map(group => ({
 
         id: group.id,
         organizerId: group.organizerId,
@@ -132,11 +192,13 @@ const validateMembership = [
         state: group.state,
         createdAt: group.createdAt,
         updatedAt: group.updatedAt,
-        numMembers: 10,
-        previewImage: true
-      };
+        numMembers: group.Memberships.length,
+        previewImage: url
 
+     })
+    )
 
+      console.log(groupList)
     res.status(200).json( groupList);
 
 
@@ -151,6 +213,7 @@ const validateMembership = [
       const group = await Group.findByPk(groupId, {
         include: [
           { model: GroupImage },
+          { model : Membership },
           {
             model: User,
             as:'Organizer',
@@ -163,6 +226,20 @@ const validateMembership = [
         return res.status(404).json({ message: "Group couldn't be found"});
       }
 
+      let url;
+      for(let i = 0; i < group.length; i++){
+
+        const groupImage =  await GroupImage.findAll({
+          where:{
+            groupId:group[i].id
+          }
+        })
+        for(let j= 0 ; j < groupImage.length; j++){
+         url = groupImage[i].url
+
+        }
+
+      }
       console.log(group)
       const groupDetails = {
         id: group.id,
@@ -175,8 +252,8 @@ const validateMembership = [
         state: group.state,
         createdAt: group.createdAt,
         updatedAt: group.updatedAt,
-        numMembers: await group.countUsers(), // Assuming you have a "Memberships" association
-        GroupImages: group.GroupImages,
+        numMembers: group.Memberships.length,
+        GroupImages: url,
         Organizer: group.Organizer,
         Venues: group.Venues,
       };
