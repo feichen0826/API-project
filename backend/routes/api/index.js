@@ -3,8 +3,9 @@ const router = require('express').Router();
 const sessionRouter = require('./session.js');
 const usersRouter = require('./users.js');
 const groupsRouter = require('./groups.js')
-// const venueRouter = require('./venues.js');
-// const eventRouter = require('./events.js')
+ const venueRouter = require('./venues.js');
+ const eventRouter = require('./events.js')
+ //const membershipRouter = require('./memberships.js')
 const { restoreUser } = require("../../utils/auth.js");
 
 // Connect restoreUser middleware to the API router
@@ -18,9 +19,11 @@ router.use('/users', usersRouter);
 
 router.use('/groups', groupsRouter)
 
-// router.use('/venues', venueRouter);
+router.use('/venues', venueRouter);
 
-// router.use('/events', eventRouter)
+router.use('/events', eventRouter)
+
+//router.use('/memberships', membershipRouter)
 
 router.post('/test', (req, res) => {
   res.json({ requestBody: req.body });

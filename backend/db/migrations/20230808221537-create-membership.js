@@ -18,14 +18,16 @@ module.exports = {
         allowNull:false,
         references:{
           model:'Users'
-        }
+        },
+        onDelete:'CASCADE'
       },
       groupId: {
         type: Sequelize.INTEGER,
         allowNull:false,
         references:{
           model:'Groups'
-        }
+        },
+        onDelete:'CASCADE'
       },
       status: {
         type: Sequelize.ENUM,

@@ -8,19 +8,28 @@ const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
 const {Group,Venue} = require('../../db/models')
 
-router.put('/:venueId', async (req, res) => {
+const validateVenue = [
+  check('address')
+    .exists({ checkFalsy: true })
+    .withMessage('Street address is required'), // Customize error message
+  check('city')
+    .exists({ checkFalsy: true })
+    .withMessage('City is required'), // Customize error message
+  check('state')
+    .exists({ checkFalsy: true })
+    .withMessage('State is required'), // Customize error message
+  check('lat')
+    .isFloat({ min: -90, max: 90 })
+    .withMessage('Latitude is not valid'), // Customize error message
+  check('lng')
+    .isFloat({ min: -180, max: 180 })
+    .withMessage('Longitude is not valid'), // Customize error message
+  handleValidationErrors
+];
+
+router.put('/:venueId', validateVenue, async (req, res) => {
     const venueId = req.params.venueId;
     const { address, city, state, lat, lng } = req.body;
-
-
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //   return res.status(400).json({
-    //     message: 'Bad Request',
-    //     errors: errors.array()
-    //   });
-    // }
-
 
       const venue = await Venue.findByPk(venueId);
 
