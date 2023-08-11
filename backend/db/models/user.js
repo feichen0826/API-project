@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.hasMany(models.Attendance,{
+      User.belongsToMany(models.Event,{
+        through:models.Attendance,
         foreignKey:'userId',
-        onDelete:'CASCADE',
-        hooks:true,
+        otherKey:'eventId'
       })
       User.belongsToMany(models.Group,{
         through:models.Membership,

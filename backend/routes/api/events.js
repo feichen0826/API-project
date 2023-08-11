@@ -202,4 +202,83 @@ router.get('/',async (req, res) => {
       res.status(200).json({ message: 'Successfully deleted' });
 
   });
+
+  //Request attendance for an event specified by id
+  router.post('/:eventId/attendance', async (req, res) => {
+    const eventId = req.params.eventId;
+    const userId = req.user.id;
+
+
+
+      const event = await Event.findByPk(eventId);
+      if (!event) {
+        return res.status(404).json({ message: 'Event couldn\'t be found' });
+      }
+
+
+      const membership = await Membership.findOne({
+        where: { groupId: event.groupId, userId, status: ['co-host', 'member'] },
+      });
+
+      if (!membership) {
+        return res.status(403).json({ message: 'User is not authorized to request attendance' });
+      }
+
+
+      const existingAttendance = await Attendance.findOne({
+        where: { eventId, userId },
+      });
+
+      if (existingAttendance) {
+        if (existingAttendance.status === 'pending') {
+          return res.status(400).json({ message: 'Attendance has already been requested' });
+        } else {
+          return res.status(400).json({ message: 'User is already an attendee of the event' });
+        }
+      }
+
+
+      const newAttendance = await Attendance.create({
+        eventId,
+        userId,
+        status: 'pending',
+      });
+
+      return res.status(200).json(newAttendance);
+
+  });
+
+  //change the status of an attendance
+  router.put('/:eventId/attendance', async (req, res) => {
+    const eventId = req.params.eventId;
+    const userId = req.body.userId; // Assuming the userId is provided in the request body
+    const newStatus = req.body.status; // Assuming the new status is provided in the request body
+
+
+      const event = await Event.findByPk(eventId);
+      if (!event) {
+        return res.status(404).json({ message: 'Event couldn\'t be found' });
+      }
+
+
+      const attendance = await Attendance.findOne({
+        where: { eventId, userId },
+      });
+
+      if (!attendance) {
+        return res.status(404).json({ message: 'Attendance between the user and the event does not exist' });
+      }
+
+      if (newStatus === 'pending') {
+        return res.status(400).json({ message: 'Cannot change an attendance status to pending' });
+      }
+
+
+      attendance.status = newStatus;
+      await attendance.save();
+
+      return res.status(200).json(attendance);
+
+  });
+
   module.exports = router
