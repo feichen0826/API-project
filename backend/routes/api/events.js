@@ -281,4 +281,48 @@ router.get('/',async (req, res) => {
 
   });
 
+  router.get('/:eventId/attendees', async (req, res) => {
+    const eventId = req.params.eventId;
+
+
+      const event = await Event.findOne({
+        where: { id: eventId },
+        include: [{
+          model: Attendance,
+          include: [{
+            model: User,
+            attributes: ['id', 'firstName', 'lastName'],
+          }],
+        }],
+      });
+
+      if (!event) {
+        return res.status(404).json({ message: "Event couldn't be found" });
+      }
+
+      // Check if the requester is the organizer or a co-host
+      const requesterIsOrganizer = req.userIsOrganizer; // Replace with your authorization logic
+
+      const attendees = event.Attendances.map(attendance => {
+        const { id, firstName, lastName } = attendance.User;
+        return {
+          id,
+          firstName,
+          lastName,
+          Attendance: {
+            status: attendance.status,
+          },
+        };
+      });
+
+      // If requester is not the organizer or a co-host, filter out pending attendees
+      if (!requesterIsOrganizer) {
+        const filteredAttendees = attendees.filter(attendee => attendee.Attendance.status !== 'pending');
+        return res.status(200).json({ Attendees: filteredAttendees });
+      }
+
+      res.status(200).json({ Attendees: attendees });
+
+  });
+
   module.exports = router
