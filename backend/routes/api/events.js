@@ -72,24 +72,14 @@ router.get('/',async (req, res) => {
               attributes: [],
             },
           },
-          {
-            model:EventImage,
-            attributes:['url'],
-            as:'previewImage'
-
-          }
         ],
         attributes: {
           exclude: ['createdAt', 'updatedAt', 'groupId', 'venueId'],
-          include: [
-            [
-              sequelize.fn('MAX', sequelize.col('previewImage.id')),
-              'previewImageId',
-            ],
-          ],
+
         },
-        group: ['Event.id', 'Group.id', 'Venue.id','previewImage.id'],
+
       });
+
 
       for (const event of events) {
         const numAttending = await Attendance.count({
@@ -99,6 +89,9 @@ router.get('/',async (req, res) => {
            },
         });
         event.dataValues.numAttending = numAttending;
+        const images = await event.getEventImages();
+        const imageUrls = images.map(image => image.url);
+        event.dataValues.previewImage = imageUrls;
       }
       res.json({Event: events});
 
@@ -281,75 +274,110 @@ router.get('/',async (req, res) => {
   });
 
 
-
-  //change the status of an attendance
-  router.put('/:eventId/attendance', async (req, res) => {
-    const eventId = req.params.eventId;
-    const userId = req.user.id;
-
+  const isOrganizerOrCoHost = async (eventId, userId) => {
     const event = await Event.findOne({
       where: { id: eventId },
+
     });
 
+    if (!event) {
+      return false;
+    }
+
+    if (event.organizerId === userId) {
+      return true;
+    }
+
+    const coHostMembership = await Membership.findOne({
+      where: { groupId: event.groupId, userId, status: 'co-host' },
+    });
+    return !!coHostMembership;
+};
+
+  router.put('/:eventId/attendance', async (req, res) => {
+    const eventId = req.params.eventId;
+    const { userId, status } = req.body;
+
+
+    const event = await Event.findByPk(eventId);
     if (!event) {
       return res.status(404).json({ message: "Event couldn't be found" });
     }
 
-    const membership = await Membership.findOne({
-      where: { groupId: event.groupId, userId },
-    });
 
-    if (!membership) {
-      return res.status(403).json({ message: "Current User is not a member of the group" });
+   const isOrganizer = await isOrganizerOrCoHost(eventId, req.user.id);
+    if (!isOrganizer) {
+      return res.status(403).json({ message: "You don't have permission to change attendance status" });
     }
 
 
-    const pendingAttendance = await Attendance.findOne({
-      where: { eventId, userId, status: 'pending' },
+    const attendance = await Attendance.findOne({
+      where: {
+        eventId: eventId,
+        userId: userId
+      }
     });
 
-    if (pendingAttendance) {
-      return res.status(400).json({ message: "Attendance has already been requested" });
+    if (!attendance) {
+      return res.status(404).json({ message: "Attendance between the user and the event does not exist" });
     }
 
-    const acceptedAttendance = await Attendance.findOne({
-      where: { eventId, userId, status: 'attending' },
-    });
-
-    if (acceptedAttendance) {
-      return res.status(400).json({ message: "User is already an attendee of the event" });
+    if (status === 'pending') {
+      return res.status(400).json({ message: "Cannot change an attendance status to pending" });
     }
 
 
-    await Attendance.create({
-      eventId,
-      userId,
-      status: 'pending',
+    await attendance.update({ status: status });
+
+    res.status(200).json({
+      id: userId,
+      eventId: attendance.eventId,
+      userId: attendance.userId,
+      status: attendance.status
     });
 
-    res.status(200).json({ userId, status: 'pending' });
+    // const eventId = req.params.eventId;
+    // const userId = req.user.id;
+
+    // const event = await Event.findOne({
+    //   where: { id: eventId },
+    // });
+
+    // if (!event) {
+    //   return res.status(404).json({ message: "Event couldn't be found" });
+    // }
+
+    // const attendance = await Attendance.findOne({
+    //   where: { groupId: event.groupId, userId },
+    // });
+
+    // // const pendingAttendance = await Attendance.findOne({
+    // //   where: { eventId, userId, status: 'pending' },
+    // // });
+
+    // // if (pendingAttendance) {
+    // //   return res.status(400).json({ message: "Attendance has already been requested" });
+    // // }
+
+    // const acceptedAttendance = await Attendance.findOne({
+    //   where: { eventId, userId, status: 'attending' },
+    // });
+
+    // if (acceptedAttendance) {
+    //   return res.status(400).json({ message: "User is already an attendee of the event" });
+    // }
+
+
+    // await Attendance.create({
+    //   eventId,
+    //   userId,
+    //   status: 'pending',
+    // });
+
+    // res.status(200).json({ userId, status: 'pending' });
   });
 
   //Get all Attendees of an Event specified by its id
-  const isOrganizerOrCoHost = async (eventId, userId) => {
-      const event = await Event.findOne({
-        where: { id: eventId },
-
-      });
-
-      if (!event) {
-        return false;
-      }
-
-      if (event.organizerId === userId) {
-        return true;
-      }
-
-      const coHostMembership = await Membership.findOne({
-        where: { groupId: event.groupId, userId, status: 'co-host' },
-      });
-      return !!coHostMembership;
-  };
 
 
   router.get('/:eventId/attendees', async (req, res) => {

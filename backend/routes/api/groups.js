@@ -474,34 +474,30 @@ router.put('/:groupId', validateGroup, async (req, res) => {
                 where: { status: 'attending' },
               },
             },
-            {
-              model:EventImage,
-              attributes:['url'],
-              as:'previewImage'
-            },
+
 
           ],
 
-          group: ['Event.id', 'Group.id', 'Venue.id','Attendances.id'],
         });
-        const eventsWithNumAttending = await Promise.all(
-          events.map(async (event) => {
-            const numAttending = await Attendance.count({
-              where: {
-                eventId: event.id,
-                status: 'attending',
-              },
-            });
-            event.dataValues.numAttending = numAttending;
-            return event;
-          })
-        );
+
+        for (const event of events) {
+          const numAttending = await Attendance.count({
+            where: {
+              eventId: event.id,
+              status: 'attending'
+             },
+          });
+          event.dataValues.numAttending = numAttending;
+          const images = await event.getEventImages();
+          const imageUrls = images.map(image => image.url);
+          event.dataValues.previewImage = imageUrls;
+
+        }
 
         res.json({
-          Events: eventsWithNumAttending,
+          Events: events,
         });
-      });
-
+      })
 //Get all Members of a Group specified by its id
 router.get('/:groupId/members', async (req, res) => {
   const groupId = req.params.groupId;
