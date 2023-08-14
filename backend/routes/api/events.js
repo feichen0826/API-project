@@ -169,7 +169,6 @@ router.get('/',async (req, res) => {
           },
           {
             model: EventImage,
-            as:'previewImage',
             attributes: ['id', 'url', 'preview'],
           },
         ],
@@ -189,6 +188,12 @@ router.get('/',async (req, res) => {
         });
 
 
+
+          const images = await event.getEventImages();
+          const imageUrls = images.map(image => image.url);
+
+
+
       const eventDetails = {
         id: event.id,
         groupId: event.groupId,
@@ -203,7 +208,7 @@ router.get('/',async (req, res) => {
         numAttending: num,
         Group: event.Group,
         Venue: event.Venue,
-        EventImages: event.previewImage,
+        EventImages: imageUrls,
       };
 
       res.json(eventDetails);

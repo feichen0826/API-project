@@ -147,14 +147,14 @@ const validateMembership = [
   // Get all Groups joined or organized by the Current User
   router.get('/current', async (req, res) => {
 
-      const user = req.user;
+      // const user = req.user;
 
       //const previewImage = await Group.getPreviewImage()
       const group = await Group.findAll({
         include:[{
           model:Membership,
           where: {
-            userId: user.id,
+            userId: req.user.id
           },
         },{
           model:GroupImage
@@ -198,7 +198,7 @@ const validateMembership = [
      })
     )
 
-      //console.log(groupList)
+      console.log(groupList)
     res.status(200).json( groupList);
 
 
@@ -640,7 +640,8 @@ router.put('/:groupId/membership', async (req, res) => {
   const existingMembership = await Membership.findOne({
         where: { groupId, userId},
       });
-  const targetMembership = group.Memberships.find(membership => memberId === membership.id);
+  const targetMembership = group.Memberships[0]
+  console.log(targetMembership)
   if (!targetMembership) {
     return res.status(404).json({
       message: "Membership between the user and the group does not exist",
