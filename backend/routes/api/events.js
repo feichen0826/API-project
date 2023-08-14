@@ -298,19 +298,20 @@ router.get('/',async (req, res) => {
     });
     return !!coHostMembership;
 };
-
+//Change the status of an attendance for an event specified by id
   router.put('/:eventId/attendance', async (req, res) => {
-    const eventId = req.params.eventId;
+
     const { userId, status } = req.body;
 
 
-    const event = await Event.findByPk(eventId);
+    const event = await Event.findByPk(req.params.eventId);
+    console.log(event)
     if (!event) {
       return res.status(404).json({ message: "Event couldn't be found" });
     }
 
 
-   const isOrganizer = await isOrganizerOrCoHost(eventId, req.user.id);
+   const isOrganizer = await isOrganizerOrCoHost(req.params.eventId, req.user.id);
     if (!isOrganizer) {
       return res.status(403).json({ message: "You don't have permission to change attendance status" });
     }
@@ -318,10 +319,12 @@ router.get('/',async (req, res) => {
 
     const attendance = await Attendance.findOne({
       where: {
-        eventId: eventId,
+        eventId: req.params.eventId,
         userId: userId
       }
     });
+
+    console.log(attendance)
 
     if (!attendance) {
       return res.status(404).json({ message: "Attendance between the user and the event does not exist" });
@@ -332,8 +335,9 @@ router.get('/',async (req, res) => {
     }
 
 
-    await attendance.update({ status: status });
-
+    attendance.status = status;
+    await attendance.save();
+// await attendance.update({status:status})
     res.status(200).json({
       id: userId,
       eventId: attendance.eventId,

@@ -641,7 +641,7 @@ router.put('/:groupId/membership', async (req, res) => {
 
   const membership = await Membership.findAll()
 const targetMembership = membership.find(ele=> ele.dataValues.userId === memberId)
-  //const targetMembership = group.Memberships.find(membership=> )
+
   //console.log(targetMembership)
   if (!targetMembership) {
     return res.status(404).json({
