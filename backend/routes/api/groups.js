@@ -640,8 +640,8 @@ router.put('/:groupId/membership', async (req, res) => {
   const existingMembership = await Membership.findOne({
         where: { groupId, userId},
       });
-  const targetMembership = group.Memberships[0]
-  console.log(targetMembership)
+  const targetMembership = group.Memberships.find(membership=> memberId === membership.dataValues.id)
+  //console.log(targetMembership)
   if (!targetMembership) {
     return res.status(404).json({
       message: "Membership between the user and the group does not exist",
