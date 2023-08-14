@@ -634,13 +634,14 @@ router.put('/:groupId/membership', async (req, res) => {
     return res.status(404).json({ message: "Group couldn't be found" });
   }
   //console.log(group.Memberships)
-  // Check if the current user can change the membership status
 
-  // const currentUserMembership = group.Memberships.find(membership =>  membership.dataValues.userId === userId);
   const existingMembership = await Membership.findOne({
         where: { groupId, userId},
       });
-  const targetMembership = group.Memberships.find(membership=> memberId === membership.dataValues.id)
+
+  const membership = await Membership.findAll()
+const targetMembership = membership.find(ele=> ele.dataValues.userId === memberId)
+  //const targetMembership = group.Memberships.find(membership=> )
   //console.log(targetMembership)
   if (!targetMembership) {
     return res.status(404).json({
