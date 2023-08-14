@@ -153,12 +153,12 @@ const validateMembership = [
       const group = await Group.findAll({
         include:[{
           model:Membership,
+          where: {
+            userId: user.id,
+          },
         },{
           model:GroupImage
         }],
-        where: {
-           organizerId: req.user.id
-        }
       });
 
 
@@ -198,7 +198,7 @@ const validateMembership = [
      })
     )
 
-      console.log(groupList)
+      //console.log(groupList)
     res.status(200).json( groupList);
 
 
@@ -481,7 +481,7 @@ router.put('/:groupId', validateGroup, async (req, res) => {
 
           ],
 
-          group: ['Event.id', 'Group.id', 'Venue.id'],
+          group: ['Event.id', 'Group.id', 'Venue.id','Attendances.id'],
         });
         const eventsWithNumAttending = await Promise.all(
           events.map(async (event) => {

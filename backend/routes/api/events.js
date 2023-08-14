@@ -81,6 +81,12 @@ router.get('/',async (req, res) => {
         ],
         attributes: {
           exclude: ['createdAt', 'updatedAt', 'groupId', 'venueId'],
+          include: [
+            [
+              sequelize.fn('MAX', sequelize.col('previewImage.id')),
+              'previewImageId',
+            ],
+          ],
         },
         group: ['Event.id', 'Group.id', 'Venue.id'],
       });
@@ -244,17 +250,11 @@ router.get('/',async (req, res) => {
 
       const event = await Event.findByPk(eventId);
       if (!event) {
-        return res.status(404).json({ message: 'Event couldn\'t be found' });
+        return res.status(404).json({ message: "Event couldn't be found" });
       }
 
 
-      const membership = await Membership.findOne({
-        where: { groupId: event.groupId, userId, status: ['co-host', 'member'] },
-      });
 
-      if (!membership) {
-        return res.status(403).json({ message: 'User is not authorized to request attendance' });
-      }
 
 
       const existingAttendance = await Attendance.findOne({
@@ -264,7 +264,7 @@ router.get('/',async (req, res) => {
       if (existingAttendance) {
         if (existingAttendance.status === 'pending') {
           return res.status(400).json({ message: 'Attendance has already been requested' });
-        } else {
+        } else if (existingAttendance.status === 'attending') {
           return res.status(400).json({ message: 'User is already an attendee of the event' });
         }
       }
