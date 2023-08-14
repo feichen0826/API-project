@@ -6,33 +6,34 @@ const { User } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
-const {Group,GroupImage,Venue, Event,Attendance,EventImage ,sequelize} = require('../../db/models')
+const {Group,GroupImage,Venue, Event,Attendance,EventImage ,sequelize, Membership} = require('../../db/models');
+const e = require('express');
 
 const validateEvent = [
   check('venueId')
     .exists({ checkFalsy: true })
-    .withMessage('Venue does not exist'), // Customize error message
+    .withMessage('Venue does not exist'),
   check('name')
     .isLength({ min: 5 })
-    .withMessage('Name must be at least 5 characters'), // Customize error message
+    .withMessage('Name must be at least 5 characters'),
   check('type')
     .isIn(['Online', 'In person'])
-    .withMessage('Type must be Online or In person'), // Customize error message
+    .withMessage('Type must be Online or In person'),
   check('capacity')
     .isInt()
-    .withMessage('Capacity must be an integer'), // Customize error message
+    .withMessage('Capacity must be an integer'),
   check('price')
     .isFloat({ min: 0 })
-    .withMessage('Price is invalid'), // Customize error message
+    .withMessage('Price is invalid'),
   check('description')
     .exists({ checkFalsy: true })
-    .withMessage('Description is required'), // Customize error message
+    .withMessage('Description is required'),
   check('startDate')
     .custom((value, { req }) => {
       const currentDate = new Date();
       const startDate = new Date(value);
       if (startDate <= currentDate) {
-        throw new Error('Start date must be in the future'); // Customize error message
+        throw new Error('Start date must be in the future');
       }
       return true;
     }),
@@ -41,14 +42,14 @@ const validateEvent = [
       const startDate = new Date(req.body.startDate);
       const endDate = new Date(value);
       if (endDate <= startDate) {
-        throw new Error('End date is less than start date'); // Customize error message
+        throw new Error('End date is less than start date');
       }
       return true;
     }),
   handleValidationErrors
 ];
 
-
+//get all events
 router.get('/',async (req, res) => {
 
       const events = await Event.findAll({
@@ -71,20 +72,29 @@ router.get('/',async (req, res) => {
               attributes: [],
             },
           },
+          {
+            model:EventImage,
+            attributes:['url'],
+            as:'previewImage'
+
+          }
         ],
         attributes: {
           exclude: ['createdAt', 'updatedAt', 'groupId', 'venueId'],
-          include: [
-            [
-              sequelize.fn('COUNT', sequelize.col('Users.id')),
-              'numAttending'
-            ],
-          ],
         },
         group: ['Event.id', 'Group.id', 'Venue.id'],
       });
 
-      res.json(events);
+      for (const event of events) {
+        const numAttending = await Attendance.count({
+          where: {
+            eventId: event.id,
+            status: 'attending'
+           },
+        });
+        event.dataValues.numAttending = numAttending;
+      }
+      res.json({Event: events});
 
   });
 
@@ -114,12 +124,25 @@ router.get('/',async (req, res) => {
 //Edit an Event specified by its id
   router.put('/:eventId', validateEvent, async (req, res) => {
     const eventId = req.params.eventId;
-    const eventData = req.body;
+    const { venueId, name, type, capacity, price, description, startDate, endDate } = req.body;
     const event = await Event.findByPk(eventId);
     if (!event) {
       return res.status(404).json({ message: "Event couldn't be found" });
     }
-      await event.update(eventData);
+    const venue = await Venue.findByPk(venueId);
+    if (!venue) {
+      return res.status(404).json({ message: "Venue couldn't be found" });
+    }
+      await event.update({
+        venueId,
+        name,
+        type,
+        capacity,
+        price,
+        description,
+        startDate,
+        endDate,
+      });
 
       const updatedEvent = await Event.findByPk(eventId,{
           attributes: {
@@ -147,6 +170,7 @@ router.get('/',async (req, res) => {
           },
           {
             model: EventImage,
+            as:'previewImage',
             attributes: ['id', 'url', 'preview'],
           },
         ],
@@ -156,7 +180,15 @@ router.get('/',async (req, res) => {
         return res.json({ message: "Event couldn't be found" });
       }
 
-      const num = await event.countUsers();
+      let num;
+
+       num = await Attendance.count({
+          where: {
+            eventId: event.id,
+            status: 'attending'
+           },
+        });
+
 
       const eventDetails = {
         id: event.id,
@@ -172,7 +204,7 @@ router.get('/',async (req, res) => {
         numAttending: num,
         Group: event.Group,
         Venue: event.Venue,
-        EventImages: event.EventImages,
+        EventImages: event.previewImage,
       };
 
       res.json(eventDetails);
@@ -248,38 +280,77 @@ router.get('/',async (req, res) => {
 
   });
 
+
+
   //change the status of an attendance
   router.put('/:eventId/attendance', async (req, res) => {
     const eventId = req.params.eventId;
-    const userId = req.body.userId; // Assuming the userId is provided in the request body
-    const newStatus = req.body.status; // Assuming the new status is provided in the request body
+    const userId = req.user.id;
+
+    const event = await Event.findOne({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event couldn't be found" });
+    }
+
+    const membership = await Membership.findOne({
+      where: { groupId: event.groupId, userId },
+    });
+
+    if (!membership) {
+      return res.status(403).json({ message: "Current User is not a member of the group" });
+    }
 
 
-      const event = await Event.findByPk(eventId);
-      if (!event) {
-        return res.status(404).json({ message: 'Event couldn\'t be found' });
-      }
+    const pendingAttendance = await Attendance.findOne({
+      where: { eventId, userId, status: 'pending' },
+    });
+
+    if (pendingAttendance) {
+      return res.status(400).json({ message: "Attendance has already been requested" });
+    }
+
+    const acceptedAttendance = await Attendance.findOne({
+      where: { eventId, userId, status: 'attending' },
+    });
+
+    if (acceptedAttendance) {
+      return res.status(400).json({ message: "User is already an attendee of the event" });
+    }
 
 
-      const attendance = await Attendance.findOne({
-        where: { eventId, userId },
+    await Attendance.create({
+      eventId,
+      userId,
+      status: 'pending',
+    });
+
+    res.status(200).json({ userId, status: 'pending' });
+  });
+
+  //Get all Attendees of an Event specified by its id
+  const isOrganizerOrCoHost = async (eventId, userId) => {
+      const event = await Event.findOne({
+        where: { id: eventId },
+
       });
 
-      if (!attendance) {
-        return res.status(404).json({ message: 'Attendance between the user and the event does not exist' });
+      if (!event) {
+        return false;
       }
 
-      if (newStatus === 'pending') {
-        return res.status(400).json({ message: 'Cannot change an attendance status to pending' });
+      if (event.organizerId === userId) {
+        return true;
       }
 
+      const coHostMembership = await Membership.findOne({
+        where: { groupId: event.groupId, userId, status: 'co-host' },
+      });
+      return !!coHostMembership;
+  };
 
-      attendance.status = newStatus;
-      await attendance.save();
-
-      return res.status(200).json(attendance);
-
-  });
 
   router.get('/:eventId/attendees', async (req, res) => {
     const eventId = req.params.eventId;
@@ -287,37 +358,26 @@ router.get('/',async (req, res) => {
 
       const event = await Event.findOne({
         where: { id: eventId },
-        include: [{
-          model: Attendance,
-          include: [{
-            model: User,
-            attributes: ['id', 'firstName', 'lastName'],
-          }],
-        }],
+
       });
 
       if (!event) {
         return res.status(404).json({ message: "Event couldn't be found" });
       }
 
-      // Check if the requester is the organizer or a co-host
-      const requesterIsOrganizer = req.userIsOrganizer; // Replace with your authorization logic
+      const attendees = await event.getUsers({
+        attributes: ['id', 'firstName', 'lastName'],
 
-      const attendees = event.Attendances.map(attendance => {
-        const { id, firstName, lastName } = attendance.User;
-        return {
-          id,
-          firstName,
-          lastName,
-          Attendance: {
-            status: attendance.status,
-          },
-        };
       });
 
-      // If requester is not the organizer or a co-host, filter out pending attendees
-      if (!requesterIsOrganizer) {
-        const filteredAttendees = attendees.filter(attendee => attendee.Attendance.status !== 'pending');
+      console.log(attendees)
+
+
+
+      const requesterIsOrganizerOrCoHost = await isOrganizerOrCoHost(eventId, req.user.id);
+
+      if (!requesterIsOrganizerOrCoHost) {
+        const filteredAttendees = attendees.filter(ele => ele.Attendance.status !== 'pending');
         return res.status(200).json({ Attendees: filteredAttendees });
       }
 
@@ -325,4 +385,78 @@ router.get('/',async (req, res) => {
 
   });
 
+  router.put('/:eventId/attendance', async (req, res) => {
+    const eventId = req.params.eventId;
+    const userId = req.user.id;
+    const { status } = req.body;
+
+
+    const event = await Event.findOne({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event couldn't be found" });
+    }
+
+    const membership = await Membership.findOne({
+      where: { groupId: event.groupId, userId },
+    });
+
+    if (!membership) {
+      return res.status(403).json({ message: "Current User is not a member of the group" });
+    }
+
+
+    if (status === 'pending') {
+      return res.status(400).json({ message: "Cannot change an attendance status to pending" });
+    }
+
+
+    const attendance = await Attendance.findOne({
+      where: { eventId, userId },
+    });
+
+    if (!attendance) {
+      return res.status(404).json({ message: "Attendance between the user and the event does not exist" });
+    }
+
+
+    await attendance.update({ status });
+
+    res.status(200).json(attendance);
+  });
+
+  router.delete('/:eventId/attendance', async (req, res) => {
+    const eventId = req.params.eventId;
+    const userId = req.user.id;
+    const { userId: attendanceUserId } = req.body;
+
+    const event = await Event.findOne({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event couldn't be found" });
+    }
+
+
+    const attendance = await Attendance.findOne({
+      where: { eventId, userId: attendanceUserId },
+    });
+
+    if (!attendance) {
+      return res.status(404).json({ message: "Attendance does not exist for this User" });
+    }
+
+
+    if (userId !== attendanceUserId && userId !== event.organizerId) {
+      return res.status(403).json({ message: "Only the User or organizer may delete an Attendance" });
+    }
+
+
+    await attendance.destroy();
+
+    res.status(200).json({ message: "Successfully deleted attendance from event" });
+  });
   module.exports = router

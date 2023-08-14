@@ -6,7 +6,7 @@ const { User } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
-const {Group,GroupImage,Venue,Event, Attendance,Membership, sequelize} = require('../../db/models')
+const {Group,GroupImage,Venue,Event, Attendance,Membership, sequelize, EventImage} = require('../../db/models')
 
 const validateGroup = [
   check('name')
@@ -226,22 +226,22 @@ const validateMembership = [
         return res.status(404).json({ message: "Group couldn't be found"});
       }
 
-      let url;
-      for(let i = 0; i < group.length; i++){
+      // let url;
+      // for(let i = 0; i < group.length; i++){
 
-        const groupImage =  await GroupImage.findAll({
-          where:{
-            groupId:group[i].id
-          }
-        })
-        for(let j= 0 ; j < groupImage.length; j++){
-         url = groupImage[i].url
+      //   const groupImage =  await GroupImage.findAll({
+      //     where:{
+      //       groupId:group[i].id
+      //     }
+      //   })
+      //   for(let j= 0 ; j < groupImage.length; j++){
+      //    url = groupImage[i].url
 
-        }
+      //   }
 
-      }
-      console.log(group)
-      const groupDetails = {
+      // }
+      const groupDetails ={
+
         id: group.id,
         organizerId: group.organizerId,
         name: group.name,
@@ -253,10 +253,14 @@ const validateMembership = [
         createdAt: group.createdAt,
         updatedAt: group.updatedAt,
         numMembers: group.Memberships.length,
-        GroupImages: url,
+        GroupImages: group.GroupImages.map(image => ({
+          id: image.id,
+        url: image.url,
+        preview: image.preview
+        })),
         Organizer: group.Organizer,
         Venues: group.Venues,
-      };
+      }
 
       res.status(200).json(groupDetails);
 
@@ -265,8 +269,6 @@ const validateMembership = [
   // Create a Group
   router.post('/', validateGroup, async (req, res) => {
     const { name, about, type, private, city, state } = req.body;
-
-    // Add additional validation and error handling as needed
 
       const newGroup = await Group.create({
         name,
@@ -409,6 +411,11 @@ router.put('/:groupId', validateGroup, async (req, res) => {
     const userData = req.user;
     const { venueId, name, type, capacity, price, description, startDate, endDate } = req.body;
 
+    const group = await Group.findByPk(groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Group couldn't be found" });
+    }
+
       const newEvent = await Event.create({
         groupId,
         venueId,
@@ -419,11 +426,20 @@ router.put('/:groupId', validateGroup, async (req, res) => {
         description,
         startDate,
         endDate,
-      }, {
-        attributes: {
-          exclude: ['createdAt', 'updatedAt'],
-        },
-      });
+      })
+
+      const responseEvent = {
+        id: newEvent.id,
+        groupId: newEvent.groupId,
+        venueId: newEvent.venueId,
+        name: newEvent.name,
+        type: newEvent.type,
+        capacity: newEvent.capacity,
+        price: newEvent.price,
+        description: newEvent.description,
+        startDate: newEvent.startDate,
+        endDate: newEvent.endDate,
+      };
 
       res.status(200).json(newEvent);
 
@@ -457,82 +473,97 @@ router.put('/:groupId', validateGroup, async (req, res) => {
                 model: Attendance,
               },
             },
+            {
+              model:EventImage,
+              attributes:['url'],
+              as:'previewImage'
+            },
+
           ],
-          attributes: {
-            exclude: ['createdAt', 'updatedAt', 'groupId', 'venueId'], // Exclude unwanted attributes
-            include: [
-              'id',
-              [
-                sequelize.fn('COUNT', sequelize.col('Users.id')),
-                'numAttending'
-              ], // Count of attendees
-            ],
-          },
-          group: ['Event.id', 'Group.id', 'Venue.id'], // Group by event, group, and venue
+
+          group: ['Event.id', 'Group.id', 'Venue.id'],
         });
+        const eventsWithNumAttending = await Promise.all(
+          events.map(async (event) => {
+            const numAttending = await Attendance.count({
+              where: {
+                eventId: event.id,
+                status: 'attending',
+              },
+            });
+            event.dataValues.numAttending = numAttending;
+            return event;
+          })
+        );
 
         res.json({
-          Events: events
+          Events: eventsWithNumAttending,
         });
-    });
+      });
 
 //Get all Members of a Group specified by its id
 router.get('/:groupId/members', async (req, res) => {
   const groupId = req.params.groupId;
+  const userId = req.user.id
+
+  const isOrganizerOrCoHost = async (groupId, userId) => {
+    const membership = await Membership.findOne({
+      where: { groupId, userId },
+    });
+    return membership && (membership.status === 'organizer' || membership.status === 'co-host');
+  };
 
   const group = await Group.findOne({
     where: { id: groupId },
-    include: [{
-      model: User,
-      as:'Organizer',
-      attributes: ['id', 'firstName', 'lastName'],
-
-    },{
-      model: Membership,
-      attributes:['status'],
-      include: {
+    include: [
+      {
         model: User,
+        as: 'Organizer',
         attributes: ['id', 'firstName', 'lastName'],
       },
-    }]
+      {
+        model: Membership,
+        attributes: ['status'],
+        include: {
+          model: User,
+          attributes: ['id', 'firstName', 'lastName'],
+        },
+      },
+    ],
   });
 
-    if (!group) {
-      return res.status(404).json({ message: "Group couldn't be found" });
+  if (!group) {
+    return res.status(404).json({ message: "Group couldn't be found" });
+  }
+
+  const members = [];
+  if (await isOrganizerOrCoHost(group.id, userId)) {
+    for (const membership of group.Memberships) {
+      members.push({
+        id: membership.User.id,
+        firstName: membership.User.firstName,
+        lastName: membership.User.lastName,
+        Membership: {
+          status: membership.status,
+        },
+      });
     }
-
-    const requesterMembership = group.Memberships;
-    const statuses = requesterMembership.map(membership => membership.status);
-
-    console.log(statuses);
-
-    const isOrganizerOrCoHost = statuses.includes('co-host') || statuses.includes('organizer');
-
-    let membersResponse = [];
-
-    if (isOrganizerOrCoHost) {
-
-      membersResponse = group.Memberships.map(member => ({
-        id: member.User.id,
-        firstName: member.User.firstName,
-        lastName: member.User.lastName,
-        Membership: { status: member.status },
-      }));
-    } else {
-
-      membersResponse = group.Memberships
-        .filter(member => member.status !== 'pending')
-        .map(member => ({
-          id: member.User.id,
-          firstName: member.User.firstName,
-          lastName: member.User.lastName,
-          Membership: { status: member.status },
-        }));
+  } else {
+    for (const membership of group.Memberships) {
+      if (membership.status !== 'pending') {
+        members.push({
+          id: membership.User.id,
+          firstName: membership.User.firstName,
+          lastName: membership.User.lastName,
+          Membership: {
+            status: membership.status,
+          },
+        });
+      }
     }
+  }
 
-    const response = { Members: membersResponse };
-
-    res.status(200).json(response);
+  res.status(200).json({ Members: members });
 
 });
 
@@ -540,7 +571,6 @@ router.get('/:groupId/members', async (req, res) => {
 router.post('/:groupId/membership', validateMembership, async (req, res) => {
   const groupId = req.params.groupId;
   const userId = req.user.id;
-
 
   const group = await Group.findOne({
     where: { id: groupId },
@@ -578,46 +608,120 @@ router.post('/:groupId/membership', validateMembership, async (req, res) => {
 
 router.put('/:groupId/membership', async (req, res) => {
   const groupId = req.params.groupId;
-  const userId = req.user.id; // Assuming user is authenticated
   const { memberId, status } = req.body;
+  const userId = req.user.id;
+
+  const group = await Group.findOne({
+    where: { id: groupId },
+    include: [
+      {
+        model: User,
+        as: 'Organizer',
+        attributes: ['id'],
+      },
+      {
+        model: Membership,
+        attributes: ['id', 'status'],
+      },
+    ],
+  });
+  const targetUser = await User.findByPk(memberId);
+  if (!targetUser) {
+    return res.status(400).json({
+      message: "User couldn't be found",
+      });
+  }
 
 
-    const group = await Group.findOne({
-      where: { id: groupId },
+  if (!group) {
+    return res.status(404).json({ message: "Group couldn't be found" });
+  }
+  //console.log(group.Memberships)
+  // Check if the current user can change the membership status
+
+  // const currentUserMembership = group.Memberships.find(membership =>  membership.dataValues.userId === userId);
+  const existingMembership = await Membership.findOne({
+        where: { groupId, userId},
+      });
+  const targetMembership = group.Memberships.find(membership => memberId === membership.id);
+  if (!targetMembership) {
+    return res.status(404).json({
+      message: "Membership between the user and the group does not exist",
     });
-    //console.log(group)
-    if (!group) {
-      return res.status(404).json({ message: "Group couldn't be found" });
+  }
+  if (status === 'pending') {
+    return res.status(400).json({ message: "Cannot change a membership status to pending" });
+  }
+
+  if (status === 'member') {
+    //console.log(currentUserMembership)
+    if (group.organizerId === userId || existingMembership.status === 'co-host') {
+      targetMembership.status = status;
+      await targetMembership.save();
+      return res.status(200).json({
+        id: targetMembership.id,
+        groupId: groupId,
+        memberId: memberId,
+        status: status,
+      });
     }
+  }
 
-
-    const existingMembership = await Membership.findOne({
-      where: { groupId, userId},
-    });
-
-    if (!existingMembership) {
-      return res.status(404).json({ message: "Membership between the user and the group does not exist" });
+  if (status === 'co-host') {
+    if (group.organizerId === userId) {
+      targetMembership.status = status;
+      await targetMembership.save();
+      return res.status(200).json({
+        id: targetMembership.id,
+        groupId: groupId,
+        memberId: memberId,
+        status: status,
+      });
     }
+  }
+
+  return res.status(400).json({ message: "Invalid membership status" });
+  // const groupId = req.params.groupId;
+  // const userId = req.user.id;
+  // const { memberId, status } = req.body;
 
 
-    const member = await User.findOne({
-      where: { id: memberId },
-    });
-
-    if (!member) {
-      return res.status(400).json({ message: "User couldn't be found" });
-    }
-
-    if (status === 'pending') {
-      return res.status(400).json({ message: "Cannot change a membership status to pending" });
-    }
+  //   const group = await Group.findOne({
+  //     where: { id: groupId },
+  //   });
+  //   //console.log(group)
+  //   if (!group) {
+  //     return res.status(404).json({ message: "Group couldn't be found" });
+  //   }
 
 
+  //   const existingMembership = await Membership.findOne({
+  //     where: { groupId, userId},
+  //   });
 
-    existingMembership.status = status;
-    await existingMembership.save();
+  //   if (!existingMembership) {
+  //     return res.status(404).json({ message: "Membership between the user and the group does not exist" });
+  //   }
 
-    res.status(200).json(existingMembership);
+
+  //   const member = await User.findOne({
+  //     where: { id: memberId },
+  //   });
+
+  //   if (!member) {
+  //     return res.status(400).json({ message: "User couldn't be found" });
+  //   }
+
+  //   if (status === 'pending') {
+  //     return res.status(400).json({ message: "Cannot change a membership status to pending" });
+  //   }
+
+
+
+  //   existingMembership.status = status;
+  //   await existingMembership.save();
+
+  //   res.status(200).json({ id:existingMembership.id, memberId, groupId, status:existingMembership.status});
 
 });
 
@@ -635,7 +739,7 @@ router.delete('/:groupId/membership', async (req, res) => {
       return res.status(404).json({ message: "Group couldn't be found" });
     }
 
-    // Check if the memberId exists
+
     const member = await User.findOne({
       where: { id: memberId },
     });
@@ -644,7 +748,7 @@ router.delete('/:groupId/membership', async (req, res) => {
       return res.status(400).json({ message: "User couldn't be found" });
     }
 
-    // Check if the membership exists for the specified user
+
     const existingMembership = await Membership.findOne({
       where: { groupId, userId: memberId },
     });
@@ -653,7 +757,7 @@ router.delete('/:groupId/membership', async (req, res) => {
       return res.status(404).json({ message: "Membership does not exist for this User" });
     }
 
-    // Check authorization for deleting membership
+
     if (userId !== memberId && group.organizerId !== userId) {
       return res.status(403).json({ message: "Unauthorized to delete membership" });
     }

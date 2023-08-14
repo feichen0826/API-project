@@ -16,11 +16,6 @@ module.exports = {
         userId: 1,
       },
       {
-        status: 'attending',
-        eventId: 1,
-        userId: 2,
-      },
-      {
         status: 'waitlist',
         eventId: 1,
         userId: 3,

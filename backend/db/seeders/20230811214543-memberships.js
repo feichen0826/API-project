@@ -41,7 +41,7 @@ module.exports = {
   {
     userId: 5,
     groupId: 1,
-    status: 'member',
+    status: 'co-host',
   },
   {
     userId: 6,
