@@ -471,6 +471,7 @@ router.put('/:groupId', validateGroup, async (req, res) => {
               attributes:[],
               through: {
                 model: Attendance,
+                where: { status: 'attending' },
               },
             },
             {

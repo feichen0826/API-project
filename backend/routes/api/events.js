@@ -88,7 +88,7 @@ router.get('/',async (req, res) => {
             ],
           ],
         },
-        group: ['Event.id', 'Group.id', 'Venue.id'],
+        group: ['Event.id', 'Group.id', 'Venue.id','previewImage.id'],
       });
 
       for (const event of events) {
