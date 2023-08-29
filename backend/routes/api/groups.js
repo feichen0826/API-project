@@ -498,6 +498,8 @@ router.put('/:groupId', validateGroup, async (req, res) => {
           Events: events,
         });
       })
+
+
 //Get all Members of a Group specified by its id
 router.get('/:groupId/members', async (req, res) => {
   const groupId = req.params.groupId;
