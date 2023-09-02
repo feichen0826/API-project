@@ -31,18 +31,18 @@ const validateGroup = [
 ];
 
 const validateEvent = [
-  check('venueId')
-    .exists({ checkFalsy: true })
-    .withMessage('Venue does not exist'),
+  // check('venueId')
+  //   .exists({ checkFalsy: true })
+  //   .withMessage('Venue does not exist'),
   check('name')
     .isLength({ min: 5 })
     .withMessage('Name must be at least 5 characters'),
   check('type')
     .isIn(['Online', 'In person'])
     .withMessage('Type must be Online or In person'),
-  check('capacity')
-    .isInt()
-    .withMessage('Capacity must be an integer'),
+  // check('capacity')
+  //   .isInt()
+  //   .withMessage('Capacity must be an integer'),
   check('price')
     .isFloat({ min: 0 })
     .withMessage('Price is invalid'),
@@ -222,6 +222,7 @@ const validateMembership = [
           { model: Venue }
         ]
       });
+      console.log(group)
       if (!group) {
         return res.status(404).json({ message: "Group couldn't be found"});
       }
@@ -409,7 +410,7 @@ router.put('/:groupId', validateGroup, async (req, res) => {
   router.post('/:groupId/events', validateEvent, async (req, res) => {
     const groupId = req.params.groupId;
     const userData = req.user;
-    const { venueId, name, type, capacity, price, description, startDate, endDate } = req.body;
+    const { venueId, name, type, capacity, price, description, startDate, endDate, open } = req.body;
 
     const group = await Group.findByPk(groupId);
     if (!group) {
@@ -426,6 +427,7 @@ router.put('/:groupId', validateGroup, async (req, res) => {
         description,
         startDate,
         endDate,
+        open,
       })
 
       const responseEvent = {
@@ -439,7 +441,9 @@ router.put('/:groupId', validateGroup, async (req, res) => {
         description: newEvent.description,
         startDate: newEvent.startDate,
         endDate: newEvent.endDate,
+        open: newEvent.open
       };
+      console.log(newEvent)
 
       res.status(200).json(newEvent);
 

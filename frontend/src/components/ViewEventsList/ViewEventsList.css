@@ -1,0 +1,85 @@
+.events-list-container {
+    margin-top: 20px;
+  }
+
+
+  .caption {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #333;
+  }
+
+  .events-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  .event-item {
+    list-style: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    display: flex;
+  }
+
+  .event-item:hover {
+    background-color: #f7f7f7;
+  }
+
+
+  .event-thumbnail img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  .event-details {
+    flex: 1;
+
+  }
+
+  .event-details h3 {
+    margin: 0;
+    font-size: 20px;
+
+  }
+
+  .event-details p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+  }
+
+  nav {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: gray;
+    cursor: pointer;
+    font-size: 30px;
+  }
+
+  nav a:hover {
+    text-decoration: underline;
+  }
+
+  /* Styling for the active NavLink */
+  nav a.active {
+    color: teal;
+    text-decoration: underline;
+    cursor: default;
+  }

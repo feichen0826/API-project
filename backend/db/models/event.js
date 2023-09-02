@@ -53,7 +53,8 @@ module.exports = (sequelize, DataTypes) => {
     groupId:{
       type:DataTypes.INTEGER,
 
-    }
+    },
+    open: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Event',

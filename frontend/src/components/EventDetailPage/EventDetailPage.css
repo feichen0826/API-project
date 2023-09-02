@@ -1,0 +1,94 @@
+/* Event Detail Container */
+.event-detail-container {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  margin: 20px;
+}
+
+/* Breadcrumb Link */
+a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+/* Event Name */
+h2 {
+  font-size: 24px;
+  margin-top: 10px;
+}
+
+/* Hosted by */
+p {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+/* Event Image */
+img {
+  max-width: 100%;
+  margin-top: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Event Info Box */
+.event-info-box {
+  margin-top: 20px;
+}
+
+/* Event Info Item */
+.event-info-item {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* Clock Icon */
+i.fas.fa-clock::before {
+  content: '\f017';
+  margin-right: 5px;
+}
+
+/* Money Icon */
+i.fas.fa-money-bill-wave::before {
+  content: '\f0d6';
+  margin-right: 5px;
+}
+
+/* Map Pin Icon */
+i.fas.fa-map-pin::before {
+  content: '\f276';
+  margin-right: 5px;
+}
+
+/* Dot Separator */
+.dot {
+  margin: 0 5px;
+}
+
+/* Description */
+h3 {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* Event Actions (Update and Delete Buttons) */
+.event-actions {
+  margin-top: 20px;
+}
+
+.dark-grey-button {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* Add more styles and customization as needed */

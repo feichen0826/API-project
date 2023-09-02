@@ -45,6 +45,9 @@ module.exports = {
       price: {
         type: Sequelize.DECIMAL
       },
+      open :{
+        type: Sequelize.STRING,
+      },
       startDate: {
         type: Sequelize.DATE
       },

@@ -46,6 +46,7 @@ module.exports = {
           model:'Users'
         }
       },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

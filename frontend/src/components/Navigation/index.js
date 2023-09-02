@@ -34,12 +34,28 @@ function Navigation({ isLoaded }) {
 
   return (
     <ul>
-      <li>
+        <li>
         <NavLink exact to="/">
           Home
         </NavLink>
-      </li>
-      {isLoaded && sessionLinks}
+        </li>
+        {isLoaded && (
+        <li>
+          <ProfileButton user={sessionUser} />
+        </li>
+      )}
+        <NavLink to="/view-groups">
+          See all groups
+        </NavLink>
+
+        <NavLink to="/view-events">
+          Find an event
+        </NavLink>
+
+        <NavLink to="/create-group">
+          Start a new group
+        </NavLink>
+
     </ul>
   );
 }
