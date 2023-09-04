@@ -1,0 +1,65 @@
+/* Navigation.css */
+
+/* Navbar styles */
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 20px 20px;
+    border-bottom: #c5c5c5 2px solid;
+  }
+
+  .navbar-logo a {
+    text-decoration: none;
+    color: #dc4343;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .navbar-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+
+  .navbar-nav li {
+    margin-right: 20px;
+  }
+
+  .navbar-nav a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+  }
+
+  .navbar-auth button {
+    background-color: #fff;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  /* Updated style for the "Sign Up" button with teal background and white text */
+  .navbar-auth a.teal-button {
+    background-color: teal;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .navbar-auth a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+
+  /* Optional: Add styles for the active link (if using NavLink) */
+  .navbar-nav a.active {
+    text-decoration: underline;
+    font-weight: bold;
+  }

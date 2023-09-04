@@ -52,6 +52,8 @@ export const fetchEventDetailsAsync = (eventId) => async (dispatch) => {
   };
 
 export const createEventAsync = (groupId, eventData) => async (dispatch) => {
+  console.log('groupId:', groupId);
+  console.log('eventData:', eventData);
 
     const response = await csrfFetch(`/api/groups/${groupId}/events`, {
       method: 'POST',
@@ -61,10 +63,16 @@ export const createEventAsync = (groupId, eventData) => async (dispatch) => {
       body: JSON.stringify(eventData),
     });
     console.log(response)
+
     if (response.ok) {
       const createdEvent = await response.json();
+      // console.log('createdEvent:', createdEvent);
+      // const eventsArray = Object.values(createdEvent.Event || {});
+
+      // dispatch(createEvent(eventsArray));
       dispatch(createEvent(createdEvent));
-      return createEvent
+
+      return createdEvent
     } else {
       const errors = await response.json()
       return errors

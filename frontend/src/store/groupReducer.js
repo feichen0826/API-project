@@ -1,5 +1,4 @@
 import { csrfFetch } from "./csrf";
-import { REMOVE_ITEM } from "./items";
 
 // Action types
 const FETCH_ALL_GROUPS = 'group/fetchAllGroups';
@@ -13,6 +12,7 @@ const UPDATE_GROUP = 'UPDATE_GROUP'
 const DELETE_GROUP_REQUEST = 'group/deleteGroupRequest';
 const DELETE_GROUP_SUCCESS = 'group/deleteGroupSuccess';
 const DELETE_GROUP_FAILURE = 'group/deleteGroupFailure';
+const REMOVE_ITEM = "items/REMOVE_ITEM";
 
 // Action creators
 const fetchAllGroups = (groups) => {
@@ -61,6 +61,11 @@ const deleteGroupSuccess = (groupId) => ({
 const deleteGroupFailure = (error) => ({
   type: DELETE_GROUP_FAILURE,
   error,
+});
+
+const remove = (groupId) => ({
+  type: REMOVE_ITEM,
+  groupId
 });
 
 // Thunk action creator
@@ -141,27 +146,23 @@ export const updateGroupAsync = (groupData) => async (dispatch) => {
   }
 };
 
-// export const deleteGroupAsync = (groupId) => async (dispatch) => {
+export const deleteGroupAsync = (groupId) => async dispatch => {
+  const response = await csrfFetch(`/api/groups/${groupId}`, {
+    method: 'DELETE',
+  });
 
-//     const response = await csrfFetch(`/api/groups/${groupId}`, {
-//       method: 'DELETE',
-//     });
-
-//     if (response.ok) {
-//       dispatch(deleteGroupSuccess(groupId));
-//       return true;
-//     } else {
-//       const errorData = await response.json();
-//       throw new Error(errorData.message || 'Failed to delete group');
-//     }
-
-// };
+  if (response.ok) {
+    const { id: deletedGroupId } = await response.json();
+    dispatch(remove(deletedGroupId));
+    return true;
+  }
+};
 
 //Reducer
 const initialState = {
-    allGroups: [],
-    createErrors: {},
-    isLoading: false,
+  allGroups: [], // Initialize as an empty array
+  createErrors: {},
+  isLoading: false,
   };
 
   const groupReducer = (state = initialState, action) => {
@@ -204,11 +205,14 @@ const initialState = {
         };
 
       case REMOVE_ITEM:
-          const updatedGroups = state.allGroups.filter((group) => group.id !== action.groupId);
-      return {
-        ...state,
-        allGroups: updatedGroups,
-      };
+        const newState = { ...state };
+        delete newState.allGroups[action.groupId];
+        return newState;
+      //     const updatedGroups = state.allGroups.filter((group) => group.id !== action.groupId);
+      // return {
+      //   ...state,
+      //   allGroups: updatedGroups,
+      // };
 
       default:
         return state;

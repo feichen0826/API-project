@@ -19,12 +19,17 @@ const ViewGroupsList = () => {
 
   return (
     <div>
-       <nav>
-        <NavLink to="/view-groups">Groups</NavLink>
-        <NavLink to="/view-events">Events</NavLink>
+       <nav className='events-groups'>
+        <div className='view-events-link'>
+         <NavLink to="/view-events" activeClassName='active-link'>Events</NavLink>
+         </div>
+        <div className='view-groups-link'>
+        <NavLink to="/view-groups" activeClassName='active-link'>Groups</NavLink>
+        </div>
         </nav>
-      <h4>Groups in Meetup</h4>
-
+        <div className='groups-in-meetup'>
+      <p>Groups in Meetup</p>
+      </div>
         {allGroups.Groups.map((group) => {
           return (
           <NavLink key={group.id} to={`/groups/${group.id}`}>

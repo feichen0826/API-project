@@ -14,7 +14,7 @@ const GroupDetailPage = () => {
   const { groupId } = useParams();
   const groupDetails = useSelector((state) => state.group.groupDetails);
   const currentUser = useSelector((state) => state.session);
-  console.log(groupDetails)
+  console.log(currentUser)
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -30,17 +30,27 @@ const GroupDetailPage = () => {
   const isCurrentUserOrganizer = groupDetails.organizerId === currentUser.user.id;
 
   const handleDeleteGroup = async () => {
-    const deleted = await dispatch(deleteGroupAsync(groupId));
-    console.log(deleted)
-    if (deleted) {
-      history.push('/view-groups');
+    try {
+      const deleted = await dispatch(deleteGroupAsync(groupId));
+      console.log(deleted)
+      if (deleted) {
+        history.push('/view-groups');
+
+      }
+    } catch (error) {
+      console.error('Error deleting group:', error);
     }
   };
+
+  const handleJoinGroup = () => {
+    window.alert("Feature coming soon");
+  };
+
   return (
     <div className="group-detail-container">
-      <Link className="breadcrumb-link" to="/view-groups">Groups</Link>
+      <Link className="breadcrumb-link" to="/view-groups"> Groups </Link>
     <div className="group-detail-header">
-      <img className="group-image" src={groupDetails.previewImage} alt={groupDetails.name} />
+      <img className="group-image" src='https://secure.meetupstatic.com/photos/event/6/b/3/2/clean_514587442.webp' alt={groupDetails.name} />
       <div className="group-detail-info">
         <h2>{groupDetails.name}</h2>
         <p>{groupDetails.city}, {groupDetails.state}</p>
@@ -62,7 +72,7 @@ const GroupDetailPage = () => {
         </button>
       </div>
     ) : (
-      <button className="join-group-button">Join this group</button>
+      <button className="join-group-button" onClick={handleJoinGroup}>Join this group</button>
     )}
      </div>
      <DeleteConfirmationModal

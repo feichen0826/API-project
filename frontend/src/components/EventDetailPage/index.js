@@ -1,13 +1,14 @@
 import React, { useEffect,useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchEventDetailsAsync } from '../../store/eventReducer';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 import DeleteEventConfirmationModel from '../DeleteEventConfirmationModel'
 import { deleteEventAsync } from '../../store/eventReducer';
 import './EventDetailPage.css';
 
 const EventDetailPage = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { eventId } = useParams();
   const eventDetails = useSelector((state) => state.event.eventDetails);
   const currentUser = useSelector((state) => state.session);
@@ -18,24 +19,21 @@ const EventDetailPage = () => {
   }, [dispatch, eventId]);
 
   if (!eventDetails) {
-    return (
-      <div className="event-detail-container">
-        <p>Loading...</p>
-      </div>
-    );
+    return null
   }
   const handleDeleteEvent = async () => {
     try {
       await dispatch(deleteEventAsync(eventId));
-
+      history.push('/view-events');
     } catch (error) {
       console.error('Error deleting event:', error);
     }
   };
 
   const { name, startDate, startTime, endDate, endTime, price, venue, description, Group } = eventDetails;
-  console.log(eventDetails.Group.Organizer.firstName)
 
+  console.log('Current User:', currentUser.user.id);
+  console.log('Event Organizer ID:', Group.organizerId);
   return (
     <div className="event-detail-container">
       <Link to="/view-events">Event</Link>
@@ -57,9 +55,9 @@ const EventDetailPage = () => {
           <p>{description}</p>
         </div>
       </div>
-      {currentUser && currentUser.id === Group.organizerId && (
+      {currentUser && currentUser.user.id === Group.organizerId && (
         <div className="event-actions">
-          <button className="dark-grey-button">Update</button>
+          {/* <button className="dark-grey-button">Update</button> */}
           <button className="dark-grey-button" onClick={() => setConfirmationModalOpen(true)}>Delete</button>
         {isConfirmationModalOpen && (
         <DeleteEventConfirmationModel

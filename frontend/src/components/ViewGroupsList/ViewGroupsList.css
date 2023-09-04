@@ -1,22 +1,68 @@
 /* ViewGroupsList.css */
+.events-groups{
+ display: flex;
+ flex-direction: row;
+}
 
+.view-events-link{
+
+  margin: 20px 0px 0px 80px;
+  padding: 20px 0px 0px 80px;
+}
+
+.view-groups-link{
+
+  margin: 20px 0px 0px 20px;
+  padding: 20px 0px 0px 20px;
+}
+
+.view-events-link a,
+.view-groups-link a {
+  font-size: 25px;
+
+}
+
+.view-groups-link a {
+  color: teal;
+  text-decoration: underline;
+  pointer-events: none; /* Disable mouse events on the active link */
+}
+
+/* Style for the inactive link (Grey) */
+.view-events-link a {
+  color: grey;
+  text-decoration: none; /* Remove underline from the inactive link */
+}
+
+
+/* .active-link {
+  color: teal;
+  text-decoration: underline;
+  pointer-events: none;
+} */
 .group-image-box {
     display: flex;
     align-items: center;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    margin: 20px 80px;
+    padding: 20px 80px;
+    border-bottom: 2px solid #c5c5c5;
+
     cursor: pointer;
   }
 
+.groups-in-meetup {
+  border-bottom: 2px solid #ccc;
+  margin: 10px 80px;
+  padding: 0px 80px;
+  color: #c5c5c5;
+  }
   .group-image-box:hover {
     background-color: #f0f0f0;
   }
 
   .group-image-box img {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 150px;
     object-fit: cover;
     margin-right: 20px;
   }
@@ -59,29 +105,4 @@
 
   .nav-entry:hover {
     background-color: #f0f0f0;
-  }
-
-  nav {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  nav a {
-    text-decoration: none;
-    color: gray;
-    cursor: pointer;
-    font-size: 30px;
-  }
-
-  nav a:hover {
-    text-decoration: underline;
-  }
-
-  /* Styling for the active NavLink */
-  nav a.active {
-    color: teal;
-    text-decoration: underline;
-    cursor: default;
   }

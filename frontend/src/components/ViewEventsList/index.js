@@ -9,23 +9,38 @@ const ViewEventsList = () => {
   const eventsObj = useSelector((state) => state.event.events);
   const eventsArr = Object.values(eventsObj)
   const events = eventsArr[0]
-  console.log(eventsArr)
+  console.log(eventsObj)
 
   useEffect(() => {
     dispatch(fetchAllEventsAsync());
   }, [dispatch]);
 
-  if (events === undefined) {
-    return null;
+  if (!events || events.length === 0 || events === undefined) {
+    return <div>Loading events...</div>;
   }
+
+  // if (Object.keys(eventsObj).length === 0) {
+  //   return null;
+  // }
+
+  // if (!eventsObj.Event || eventsObj.Event.length === 0) {
+  //   return null;
+  // }
 
   return (
     <div className="events-list-container">
-        <nav>
-        <NavLink to="/view-groups">Groups</NavLink>
-        <NavLink to="/view-events">Events</NavLink>
-        </nav>
-      <p className="caption">Events in Meetup</p>
+       <nav className='events-groups'>
+        <div className='view-events-link'>
+          <NavLink to="/view-events" activeClassName='active-link'>Events</NavLink>
+        </div>
+        <div className='view-groups-link'>
+          <NavLink to="/view-groups" activeClassName='active-link'>Groups</NavLink>
+        </div>
+      </nav>
+      <div className='groups-in-meetup'>
+        <p>Events in Meetup</p>
+      </div>
+
       <ul className="events-list">
         {events.map((event) => (
           <li key={event.id} className="event-item">

@@ -1,0 +1,153 @@
+/* Reset some default browser styles */
+
+
+  /* Apply a background color to the entire page */
+  body {
+
+    font-family: Arial, sans-serif;
+  }
+
+
+
+/* Section 1 */
+.section1-content {
+  padding: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+
+.section1-text {
+  grid-column-start: 1;
+  padding-right: 20px;
+  margin: 0px 0px 0px 40px;
+}
+
+
+.section1-text h1 {
+  font-size: 36px;
+  color: #333;
+}
+
+
+.section1-text p {
+  font-size: 18px;
+  color: #666;
+}
+
+
+
+.section1-infographic{
+  grid-column-start: 2;
+  max-width: 100%;
+  height: auto;
+  margin: 0px 40px 0px 0px;
+}
+
+
+  /* Section 2 */
+  .section2 {
+    text-align: center;;
+    padding: 60px 0;
+    display: flex;
+    justify-content: center
+  }
+
+  .section2-content-into{
+    width: 450px;
+
+
+  }
+  .section2 h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .section2 p {
+    font-size: 16px;
+    color: #666;
+
+  }
+
+
+/* Section 3 */
+
+.section3 {
+  background-color: #fff;
+  padding: 40px 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+
+.section3-part1,
+.section3-part2,
+.section3-part3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+
+.section3-part1 img,
+.section3-part2 img,
+.section3-part3 img {
+  width: 100px;
+  height: auto;
+}
+
+
+.section3-link {
+  margin-top: 10px;
+  cursor: pointer;
+  color: teal;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.section3-link:hover{
+  text-decoration: underline;
+}
+
+.section3-disabled-link {
+  margin-top: 10px;
+  color: #ccc;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: default;
+}
+
+
+.section3-caption {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #666;
+}
+
+  /* Section 4 */
+  .section4 {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .section4 .join-meetus-button {
+    background-color: teal;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .section4 .join-meetus-button:hover {
+    background-color: #085675;
+    color: #fff;
+  }
