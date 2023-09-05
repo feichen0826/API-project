@@ -2,9 +2,10 @@ import React, { useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createEventAsync } from '../../store/eventReducer';
 import ErrorMessage from './ErrorMessage';
-import { useHistory, useParams } from 'react-router-dom';
+import {  useHistory, useParams } from 'react-router-dom';
 import './CreateEventForm.css';
 import { fetchGroupDetailsAsync } from '../../store/groupReducer';
+import { fetchEventDetailsAsync } from '../../store/eventReducer';
 
 const CreateEventForm = () => {
   const dispatch = useDispatch();
@@ -21,17 +22,26 @@ const CreateEventForm = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [eventCreated, setEventCreated] = useState(false);
+  const { eventId } = useParams();
   const groupDetails = useSelector((state) => state.group.groupDetails);
-
+  const eventDetails = useSelector((state) => state.event.eventDetails);
 
   useEffect(() => {
     dispatch(fetchGroupDetailsAsync(groupId));
   }, [dispatch, groupId]);
 
+    useEffect(() => {
+    dispatch(fetchEventDetailsAsync(eventId));
+  }, [dispatch, eventId]);
+
+
   if(!groupDetails || groupDetails.length === 0|| Object.keys(groupDetails).length === 0 || groupDetails === undefined){
     return <div>Loading...</div>;
   }
 
+  if (!eventDetails || eventDetails === undefined) {
+    return <div>Loading...</div>;
+  }
 
   console.log(groupDetails)
 
