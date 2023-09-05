@@ -30,7 +30,7 @@ const ViewEventsList = () => {
     dispatch(fetchAllEventsAsync());
   }, [dispatch]);
 
-  if (!events || events.length === 0 || events === undefined) {
+  if (!events || !Array.isArray(events)||events.length === 0 || events === undefined) {
     return <div>Loading events...</div>;
   }
 

@@ -84,22 +84,23 @@ const EditGroupForm = ( { groupData } ) => {
   return (
     <section className="edit-group-form">
       <form onSubmit={handleSubmit}>
-      <div>
-            <p>UPDATE YOUR GROUP'S INFORMATION</p>
-            <label>We'll walk you through a few steps to update your group's information</label>
+      <div className='update-group-into'>
+            <p className='update-your-info'>UPDATE YOUR GROUP'S INFORMATION</p>
+            <label className='we-will-update'>We'll walk you through a few steps to update your group's information</label>
         </div>
-        <div className="form-group">
+        <div className="form-group5">
           <label htmlFor="location">First, set your group's location</label>
           <p>Meetup groups meet locally, in person and online. We'll connect you with people in your area, and more can join you online.</p>
           <input
             type="text"
             id="location"
             value={location}
+            className='update-group-input'
             onChange={(e) => setLocation(e.target.value)}
           />
           <ErrorMessage message={errors.location} />
         </div>
-        <div className="form-group">
+        <div className="form-group5">
           <label htmlFor="name">What is the name of your group?</label>
           <p>Choose a name that will give people a clear idea of what the group is about. Feel free to get creative!</p>
           <input
@@ -107,11 +108,12 @@ const EditGroupForm = ( { groupData } ) => {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className='update-group-input'
           />
           <ErrorMessage message={errors.name} />
         </div>
 
-        <div className="form-group">
+        <div className="form-group5">
           <label htmlFor="about">Now describe what your group will be about</label>
           <p>People will see this when we promote your group, but you'll be able to add to it later, too.
 1, What's the purpose of the group? 2. Who should join?
@@ -124,7 +126,7 @@ const EditGroupForm = ( { groupData } ) => {
           <ErrorMessage message={errors.about} />
         </div>
 
-        <div className="form-group">
+        <div className="form-group5">
           <label htmlFor="groupType">Final steps...</label>
           <p>Is this an in person or online group?</p>
           <select
@@ -137,8 +139,7 @@ const EditGroupForm = ( { groupData } ) => {
             <option value="Online">Online</option>
           </select>
           <ErrorMessage message={errors.groupType} />
-        </div>
-        <div className="form-group">
+
           <p>Is this group private or public?</p>
           <select
             id="visibilityType"
@@ -149,14 +150,14 @@ const EditGroupForm = ( { groupData } ) => {
             <option value="Private">Private</option>
           </select>
           <ErrorMessage message={errors.visibilityType} />
-        </div>
-        <div className="form-group">
+
           <p>Please add an image URL for your group below:</p>
           <input
             type="text"
             id="imageUrl"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
+            className='update-group-input'
           />
           <ErrorMessage message={errors.imageUrl} />
         </div>

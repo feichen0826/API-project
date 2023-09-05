@@ -41,7 +41,7 @@ const ViewGroupsList = () => {
                 <p>{group.city}, {group.state}</p>
                 <p>{group.about}</p>
                 <p>{group.numMembers} members</p>
-                <p>{group.type === 'In person' ? 'Public' : 'Private'}</p>
+                <p>{group.numEvents} events · {group.type === 'In person' ? 'Public' : 'Private'}</p>
                 {group.Organizer && (
                   <p>Organized by: {group.Organizer.firstName} {group.Organizer.lastName}</p>
                 )}

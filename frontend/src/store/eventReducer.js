@@ -102,7 +102,7 @@ export const createEventAsync = (groupId, eventData) => async (dispatch) => {
 //reducer
 const initialState = {
     events: [],
-    eventDetails: null,
+    eventDetails: [],
   };
 
   const eventReducer = (state = initialState, action) => {

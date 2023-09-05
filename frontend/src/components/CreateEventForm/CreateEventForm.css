@@ -53,7 +53,7 @@
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    margin: 20px;
+    margin: 20px 0px;
   }
 
   button[type="submit"]:disabled {

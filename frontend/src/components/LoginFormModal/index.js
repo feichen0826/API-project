@@ -23,6 +23,16 @@ function LoginFormModal() {
         }
       });
   };
+  const handleDemoLogin = () => {
+    // Fill in the demo user's credentials
+    setCredential("demo@user.io");
+    setPassword("password1");
+
+    // Submit the form
+    handleSubmit(new Event("submit"));
+  };
+
+  const isButtonDisabled = credential.length < 4 || password.length < 6;
 
   return (
     <div className="login-form-container">
@@ -52,10 +62,13 @@ function LoginFormModal() {
         {errors.credential && (
           <p className="error-message">{errors.credential}</p>
         )}
-        <button type="submit" className="submit-button">
+        <button type="submit" className="submit-button" disabled={isButtonDisabled}>
           Log In
         </button>
       </form>
+      <button className="demo-login-button" onClick={handleDemoLogin}>
+        Log in as Demo User
+      </button>
     </div>
   );
 }

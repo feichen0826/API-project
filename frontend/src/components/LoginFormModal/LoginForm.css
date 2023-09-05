@@ -47,6 +47,9 @@
     transition: background-color 0.3s ease;
   }
 
-  .submit-button:hover {
-    background-color: #0056b3;
+
+
+  .demo-login-button{
+    border: none;
+    background-color: transparent;
   }

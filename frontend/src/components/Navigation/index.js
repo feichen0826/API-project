@@ -66,11 +66,11 @@ function Navigation({ isLoaded }) {
       </div>
       <ul className="navbar-nav">
 
-        {isLoaded && sessionUser && (
+        {/* {isLoaded && sessionUser && (
           <li>
             <ProfileButton user={sessionUser} />
           </li>
-        )}
+        )} */}
 
       </ul>
       <div className="navbar-auth">

@@ -51,9 +51,7 @@
   cursor: pointer;
 }
 
-.event-item:hover {
-  background-color: #f0f0f0;
-}
+
 
 .event-content {
   display: flex;
