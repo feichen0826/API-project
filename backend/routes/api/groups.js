@@ -103,6 +103,8 @@ const validateMembership = [
           model:Membership,
         },{
           model:GroupImage
+        }, {
+          model: Event, // Include the Event model to get associated events
         }]
       });
 
@@ -129,6 +131,7 @@ const validateMembership = [
           createdAt: group.createdAt,
           updatedAt: group.updatedAt,
           numMembers: group.Memberships.length,
+          numEvents: group.Events.length,
           previewImage: url,
         };
       });
