@@ -1,0 +1,107 @@
+/* EventDetailPage.css */
+.event-detail-container {
+  display: flex;
+  flex-direction: column;
+  margin: 40px;
+
+}
+
+.link-to-view-events {
+  align-self: flex-start;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.event-title {
+  font-size: 24px;
+}
+.event-content-container {
+  background-color: #f0f0f0; /* Light grey background color */
+  margin: 0 -30px; /* Negative margin to extend the background to the full width */
+  padding: 20px; /* Add padding for spacing */
+}
+
+.event-content {
+  display: flex;
+  flex-direction: row;
+  margin-top: 30px;
+
+}
+
+.event-image {
+  width: 550px;
+  height: 350px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.event-info-box {
+  flex: 1;
+}
+
+.event-info-item {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.event-description-title {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.event-description {
+  font-size: 16px;
+}
+
+.event-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dark-grey-button {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.group-image2{
+  width: 100px;
+  margin-right: 10px;
+  margin: 10px;
+}
+
+.event-description-container{
+  margin-top: 40px;
+}
+
+.group-entry{
+  background-color: #fff; /* White background color */
+  border-radius: 10px; /* Rounded corners */
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.group-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.event-info-bottom{
+  background-color: #fff;
+  margin-top: 30px;
+  border-radius: 10px;
+}
+
+.event-bottom{
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}

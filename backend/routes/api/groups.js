@@ -31,18 +31,18 @@ const validateGroup = [
 ];
 
 const validateEvent = [
-  check('venueId')
-    .exists({ checkFalsy: true })
-    .withMessage('Venue does not exist'),
+  // check('venueId')
+  //   .exists({ checkFalsy: true })
+  //   .withMessage('Venue does not exist'),
   check('name')
     .isLength({ min: 5 })
     .withMessage('Name must be at least 5 characters'),
   check('type')
     .isIn(['Online', 'In person'])
     .withMessage('Type must be Online or In person'),
-  check('capacity')
-    .isInt()
-    .withMessage('Capacity must be an integer'),
+  // check('capacity')
+  //   .isInt()
+  //   .withMessage('Capacity must be an integer'),
   check('price')
     .isFloat({ min: 0 })
     .withMessage('Price is invalid'),
@@ -103,25 +103,23 @@ const validateMembership = [
           model:Membership,
         },{
           model:GroupImage
+        }, {
+          model: Event, // Include the Event model to get associated events
         }]
       });
 
-      let url;
-      for(let i = 0; i < groups.length; i++){
+      const groupList = groups.map((group) => {
+        let url;
 
-        const groupImage =  await GroupImage.findAll({
-          where:{
-            groupId:groups[i].id
+        // Loop through group images to find the first image's URL
+        for (const groupImage of group.GroupImages) {
+          if (groupImage.url) {
+            url = groupImage.url;
+            break; // Stop searching after finding the first URL
           }
-        })
-        for(let j= 0 ; j < groupImage.length; j++){
-         url = groupImage[i].url
-
         }
 
-      }
-
-        const formattedGroups = groups.map(group => ({
+        return {
           id: group.id,
           organizerId: group.organizerId,
           name: group.name,
@@ -133,13 +131,11 @@ const validateMembership = [
           createdAt: group.createdAt,
           updatedAt: group.updatedAt,
           numMembers: group.Memberships.length,
-          previewImage: url
-
-        })
-        );
-
-
-        res.status(200).json({ Groups: formattedGroups });
+          numEvents: group.Events.length,
+          previewImage: url,
+        };
+      });
+        res.status(200).json({ Groups: groupList });
 
       })
 
@@ -222,6 +218,7 @@ const validateMembership = [
           { model: Venue }
         ]
       });
+      console.log(group)
       if (!group) {
         return res.status(404).json({ message: "Group couldn't be found"});
       }
@@ -409,7 +406,7 @@ router.put('/:groupId', validateGroup, async (req, res) => {
   router.post('/:groupId/events', validateEvent, async (req, res) => {
     const groupId = req.params.groupId;
     const userData = req.user;
-    const { venueId, name, type, capacity, price, description, startDate, endDate } = req.body;
+    const { venueId, name, type, capacity, price, description, startDate, endDate, open } = req.body;
 
     const group = await Group.findByPk(groupId);
     if (!group) {
@@ -426,6 +423,7 @@ router.put('/:groupId', validateGroup, async (req, res) => {
         description,
         startDate,
         endDate,
+        open,
       })
 
       const responseEvent = {
@@ -439,7 +437,9 @@ router.put('/:groupId', validateGroup, async (req, res) => {
         description: newEvent.description,
         startDate: newEvent.startDate,
         endDate: newEvent.endDate,
+        open: newEvent.open
       };
+      console.log(newEvent)
 
       res.status(200).json(newEvent);
 
@@ -461,6 +461,12 @@ router.put('/:groupId', validateGroup, async (req, res) => {
             {
               model: Group,
               attributes: ['id', 'name', 'city', 'state'],
+              include: [
+                {
+                  model: GroupImage,
+                  attributes: ['url'],
+                },
+              ],
             },
             {
               model: Venue,

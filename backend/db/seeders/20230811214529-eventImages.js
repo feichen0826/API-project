@@ -11,17 +11,17 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await EventImage.bulkCreate([
       {
-        url: 'https://example.com/event1_image1.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/9/5/b/d/clean_490178333.webp',
         preview: true,
         eventId: 1,
       },
       {
-        url: 'https://example.com/event1_image2.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/b/c/d/8/clean_481008344.webp',
         preview: false,
         eventId: 1,
       },
       {
-        url: 'https://example.com/event2_image1.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/3/c/3/4/clean_510855412.webp',
         preview: true,
         eventId: 2,
       },

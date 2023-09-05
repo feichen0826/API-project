@@ -1,0 +1,79 @@
+/* CreateGroupForm.css */
+.create-group-form {
+    max-width: 800px;
+    margin: 0 auto 0 180px;
+    padding: 20px;
+
+    border-radius: 5px;
+
+  }
+.become-an-organizer{
+  font-size: 13px;
+  color: teal;
+  font-weight: bold;
+
+}
+.we-will-walk-you{
+  font-size: 25px;
+  font-weight: bold;
+
+
+}
+.create-group-into{
+  border-bottom: 2px solid #c5c5c5 ;
+  padding: 15px 0px;
+  margin-bottom: 15px;
+}
+  .form-group2 {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #c5c5c5 ;
+  }
+
+  .form-group2 label {
+    font-weight: bold;
+    font-size: 25px;
+
+  }
+
+  .form-group2 p {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+
+  .form-group2 input,
+  .form-group2 select,
+  .form-group2 textarea {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .form-group2 textarea {
+    height: 100px;
+  }
+
+  .form-group2 button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  .create-group-button{
+    background-color: red;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }

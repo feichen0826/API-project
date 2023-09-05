@@ -1,0 +1,88 @@
+/* ViewEventsList.css */
+.events-groups {
+  display: flex;
+  flex-direction: row;
+}
+
+.view-events-link2 {
+  margin: 20px 0px 0px 80px;
+  padding: 20px 0px 0px 80px;
+}
+
+.view-groups-link2 {
+  margin: 20px 0px 0px 20px;
+  padding: 20px 0px 0px 20px;
+}
+
+.view-events-link2 a,
+.view-groups-link2 a {
+  font-size: 25px;
+}
+
+.view-groups-link2 a {
+  color: grey;
+  text-decoration: none; /* Remove underline from the inactive link */
+}
+
+.view-events-link2 a {
+  color: teal;
+  text-decoration: underline;
+  pointer-events: none; /* Disable mouse events on the active link */
+}
+
+.groups-in-meetup {
+  border-bottom: 2px solid #ccc;
+  margin: 10px 80px;
+  padding: 0px 80px;
+  color: #c5c5c5;
+}
+
+.events-list {
+  list-style: none;
+  padding: 0;
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  margin: 20px 80px;
+  padding: 20px 80px;
+
+  cursor: pointer;
+}
+
+
+
+.event-content {
+  display: flex;
+  width: 100%;
+}
+
+.event-thumbnail img {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.event-details {
+  flex: 1;
+}
+
+.event-details p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.event-info p:last-child {
+  font-weight: bold;
+}
+
+.event-description2{
+  border-bottom: 2px solid #c5c5c5;
+  margin: 0px 80px 20px 80px;
+  padding: 0px 80px 20px 80px;
+
+
+}

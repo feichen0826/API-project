@@ -12,27 +12,27 @@ module.exports = {
     await GroupImage.bulkCreate([
       {
         groupId: 1,
-        url: 'https://example.com/image1.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/7/e/2/f/clean_495992303.webp',
         preview: true,
       },
       {
         groupId: 1,
-        url: 'https://example.com/image2.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/3/1/6/a/clean_515412650.webp',
         preview: false,
       },
       {
         groupId: 2,
-        url: 'https://example.com/image3.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/1/a/2/6/clean_499926694.webp',
         preview: true,
       },
       {
         groupId: 2,
-        url: 'https://example.com/image4.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/a/e/1/f/clean_515324575.webp',
         preview: false,
       },
       {
         groupId: 2,
-        url: 'https://example.com/image5.jpg',
+        url: 'https://secure.meetupstatic.com/photos/event/6/b/3/2/clean_514587442.webp',
         preview: true,
       },
     /**

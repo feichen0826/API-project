@@ -161,7 +161,19 @@ router.get('/',async (req, res) => {
         include: [
           {
             model: Group,
-            attributes: ['id', 'name', 'private', 'city', 'state'],
+            attributes: ['id', 'name', 'private', 'city', 'state', 'organizerId'],
+
+            include: [
+              {
+                model: User,
+                attributes: ['firstName', 'lastName'],
+                as: 'Organizer',
+              },
+              {
+                model: GroupImage,
+                attributes: ['url'],
+              },
+            ]
           },
           {
             model: Venue,
@@ -196,6 +208,7 @@ router.get('/',async (req, res) => {
 
       const eventDetails = {
         id: event.id,
+        organizerId: event.Group.organizerId,
         groupId: event.groupId,
         venueId: event.venueId,
         name: event.name,

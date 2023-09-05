@@ -1,0 +1,67 @@
+.edit-group-form{
+    max-width: 800px;
+    margin: 0 auto 0 180px;
+    padding: 20px;
+
+    border-radius: 5px;
+
+}
+
+.update-your-info{
+    font-size: 13px;
+    color: teal;
+    font-weight: bold;
+
+  }
+  .we-will-update{
+    font-size: 25px;
+    font-weight: bold;
+
+
+  }
+
+.update-group-into{
+    border-bottom: 2px solid #c5c5c5 ;
+    padding: 15px 0px;
+    margin-bottom: 15px;
+}
+
+.form-group5{
+    margin-bottom: 20px;
+    border-bottom: 2px solid #c5c5c5 ;
+  }
+
+  .form-group5 label {
+    font-weight: bold;
+    font-size: 25px;
+
+  }
+
+  .form-group5 p {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+
+  .form-group5 input,
+  .form-group5 select,
+  .form-group5 textarea {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .form-group5 textarea {
+    height: 100px;
+  }
+
+  .form-group5 button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
