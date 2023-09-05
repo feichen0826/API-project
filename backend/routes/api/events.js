@@ -162,11 +162,16 @@ router.get('/',async (req, res) => {
           {
             model: Group,
             attributes: ['id', 'name', 'private', 'city', 'state', 'organizerId'],
+
             include: [
               {
                 model: User,
                 attributes: ['firstName', 'lastName'],
                 as: 'Organizer',
+              },
+              {
+                model: GroupImage,
+                attributes: ['url'],
               },
             ]
           },

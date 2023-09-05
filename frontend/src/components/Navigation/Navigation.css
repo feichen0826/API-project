@@ -4,8 +4,8 @@
 .navbar {
     display: flex;
     align-items: center;
-    padding: 20px 20px;
-    border-bottom: #c5c5c5 2px solid;
+    padding: 0px 20px;
+    border-bottom: #a8a8a8 2px solid;
   }
 
   .navbar-logo a {

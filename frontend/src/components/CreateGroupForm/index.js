@@ -15,7 +15,7 @@ const CreateGroupForm = () => {
   const [name, setName] = useState('');
   const [about, setAbout] = useState('');
   const [groupType, setGroupType] = useState('');
-  const [visibilityType, setVisibilityType] = useState('Private');
+  const [visibilityType, setVisibilityType] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
   const handleSubmit = async (e) => {
@@ -86,11 +86,11 @@ const CreateGroupForm = () => {
   return (
     <section className="create-group-form">
       <form onSubmit={handleSubmit}>
-        <div>
-            <p>BECOME AN ORGANIZER</p>
-            <label>We'll walk you through a few steps to build your local community</label>
+        <div className='create-group-into'>
+            <p className='become-an-organizer'>BECOME AN ORGANIZER</p>
+            <label className='we-will-walk-you'>We'll walk you through a few steps to build your local community</label>
         </div>
-        <div className="form-group">
+        <div className="form-group2">
           <label htmlFor="location">First, set your group's location</label>
           <p>Meetup groups meet locally, in person and online. We'll connect you with people in your area, and more can join you online.</p>
           <input
@@ -98,10 +98,12 @@ const CreateGroupForm = () => {
             id="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            className='create-group-input'
+            placeholder="City, STATE"
           />
           <ErrorMessage message={errors.location} />
         </div>
-        <div className="form-group">
+        <div className="form-group2">
           <label htmlFor="name">What will your group's name be?</label>
           <p>Choose a name that will give people a clear idea of what the group is about. Feel free to get creative! You can edit this later if you change your mind.</p>
           <input
@@ -109,11 +111,13 @@ const CreateGroupForm = () => {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className='create-group-input'
+            placeholder="What is your group name?"
           />
           <ErrorMessage message={errors.name} />
         </div>
 
-        <div className="form-group">
+        <div className="form-group2">
           <label htmlFor="about">Now describe what your group will be about</label>
           <p>People will see this when we promote your group, but you'll be able to add to it later, too.
 1, What's the purpose of the group? 2. Who should join?
@@ -122,11 +126,13 @@ const CreateGroupForm = () => {
             id="about"
             value={about}
             onChange={(e) => setAbout(e.target.value)}
+
+            placeholder='Please write at least 30 characters'
           />
           <ErrorMessage message={errors.about} />
         </div>
 
-        <div className="form-group">
+        <div className="form-group2">
           <label htmlFor="groupType">Final steps...</label>
           <p>Is this an in person or online group?</p>
           <select
@@ -139,26 +145,28 @@ const CreateGroupForm = () => {
             <option value="Online">Online</option>
           </select>
           <ErrorMessage message={errors.groupType} />
-        </div>
-        <div className="form-group">
+
           <p>Is this group private or public?</p>
           <select
             id="visibilityType"
             value={visibilityType}
             onChange={(e) => setVisibilityType(e.target.value)}
+            placeholder='select one'
           >
+            <option value=""></option>
             <option value="Public">Public</option>
             <option value="Private">Private</option>
           </select>
           <ErrorMessage message={errors.visibilityType} />
-        </div>
-        <div className="form-group">
+
           <p>Please add an image URL for your group below:</p>
           <input
             type="text"
             id="imageUrl"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
+            className='create-group-input'
+            placeholder='Image Url'
           />
           <ErrorMessage message={errors.imageUrl} />
         </div>

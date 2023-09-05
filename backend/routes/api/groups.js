@@ -106,22 +106,18 @@ const validateMembership = [
         }]
       });
 
-      let url;
-      for(let i = 0; i < groups.length; i++){
+      const groupList = groups.map((group) => {
+        let url;
 
-        const groupImage =  await GroupImage.findAll({
-          where:{
-            groupId:groups[i].id
+        // Loop through group images to find the first image's URL
+        for (const groupImage of group.GroupImages) {
+          if (groupImage.url) {
+            url = groupImage.url;
+            break; // Stop searching after finding the first URL
           }
-        })
-        for(let j= 0 ; j < groupImage.length; j++){
-         url = groupImage[i].url
-
         }
 
-      }
-
-        const formattedGroups = groups.map(group => ({
+        return {
           id: group.id,
           organizerId: group.organizerId,
           name: group.name,
@@ -133,13 +129,10 @@ const validateMembership = [
           createdAt: group.createdAt,
           updatedAt: group.updatedAt,
           numMembers: group.Memberships.length,
-          previewImage: url
-
-        })
-        );
-
-
-        res.status(200).json({ Groups: formattedGroups });
+          previewImage: url,
+        };
+      });
+        res.status(200).json({ Groups: groupList });
 
       })
 
@@ -465,6 +458,12 @@ router.put('/:groupId', validateGroup, async (req, res) => {
             {
               model: Group,
               attributes: ['id', 'name', 'city', 'state'],
+              include: [
+                {
+                  model: GroupImage,
+                  attributes: ['url'],
+                },
+              ],
             },
             {
               model: Venue,

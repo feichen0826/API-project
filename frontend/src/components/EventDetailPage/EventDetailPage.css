@@ -1,78 +1,62 @@
-/* Event Detail Container */
+/* EventDetailPage.css */
 .event-detail-container {
-  padding: 20px;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  margin: 40px;
+
 }
 
-/* Breadcrumb Link */
-a {
-  color: #007bff;
-  text-decoration: none;
-  font-size: 16px;
+.link-to-view-events {
+  align-self: flex-start;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
-/* Event Name */
-h2 {
+.event-title {
   font-size: 24px;
-  margin-top: 10px;
+}
+.event-content-container {
+  background-color: #f0f0f0; /* Light grey background color */
+  margin: 0 -30px; /* Negative margin to extend the background to the full width */
+  padding: 20px; /* Add padding for spacing */
 }
 
-/* Hosted by */
-p {
-  font-size: 16px;
-  margin-top: 5px;
+.event-content {
+  display: flex;
+  flex-direction: row;
+  margin-top: 30px;
+
 }
 
-/* Event Image */
+.event-image {
+  width: 550px;
+  height: 350px;
+  object-fit: cover;
+  margin-right: 20px;
+}
 
-
-/* Event Info Box */
 .event-info-box {
-  margin-top: 20px;
+  flex: 1;
 }
 
-/* Event Info Item */
 .event-info-item {
   font-size: 16px;
   margin-bottom: 10px;
 }
 
-/* Clock Icon */
-i.fas.fa-clock::before {
-  content: '\f017';
-  margin-right: 5px;
-}
-
-/* Money Icon */
-i.fas.fa-money-bill-wave::before {
-  content: '\f0d6';
-  margin-right: 5px;
-}
-
-/* Map Pin Icon */
-i.fas.fa-map-pin::before {
-  content: '\f276';
-  margin-right: 5px;
-}
-
-/* Dot Separator */
-.dot {
-  margin: 0 5px;
-}
-
-/* Description */
-h3 {
+.event-description-title {
   font-size: 18px;
   margin-top: 10px;
 }
 
-/* Event Actions (Update and Delete Buttons) */
+.event-description {
+  font-size: 16px;
+}
+
 .event-actions {
   margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .dark-grey-button {
@@ -82,8 +66,42 @@ h3 {
   border: none;
   border-radius: 5px;
   font-size: 16px;
-  margin-right: 10px;
   cursor: pointer;
 }
+.group-image2{
+  width: 100px;
+  margin-right: 10px;
+  margin: 10px;
+}
 
-/* Add more styles and customization as needed */
+.event-description-container{
+  margin-top: 40px;
+}
+
+.group-entry{
+  background-color: #fff; /* White background color */
+  border-radius: 10px; /* Rounded corners */
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.group-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.event-info-bottom{
+  background-color: #fff;
+  margin-top: 30px;
+  border-radius: 10px;
+}
+
+.event-bottom{
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}

@@ -11,7 +11,7 @@
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     z-index: 1000;
-    max-width: 300px;
+
   }
 
   .delete-confirmation-modal h3 {
@@ -24,6 +24,11 @@
     font-size: 1rem;
     margin-bottom: 20px;
     color: #555;
+  }
+  .button-container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
   }
 
   .confirm-delete-button,

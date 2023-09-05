@@ -27,7 +27,7 @@ const GroupDetailPage = () => {
     return null;
   }
 
-  const isCurrentUserOrganizer = groupDetails.organizerId === currentUser.user.id;
+  const isCurrentUserOrganizer = currentUser.user && groupDetails.organizerId === currentUser.user.id;
 
   const handleDeleteGroup = async () => {
     try {
@@ -46,11 +46,17 @@ const GroupDetailPage = () => {
     window.alert("Feature coming soon");
   };
 
+  console.log()
+
   return (
     <div className="group-detail-container">
       <Link className="breadcrumb-link" to="/view-groups"> Groups </Link>
     <div className="group-detail-header">
-      <img className="group-image" src='https://secure.meetupstatic.com/photos/event/6/b/3/2/clean_514587442.webp' alt={groupDetails.name} />
+    {groupDetails.GroupImages[0] ? (
+          <img className="group-image" src={groupDetails.GroupImages[0].url} alt={groupDetails.name} />
+        ) : (
+          <div className="group-image-placeholder">No Image</div>
+        )}
       <div className="group-detail-info">
         <h2>{groupDetails.name}</h2>
         <p>{groupDetails.city}, {groupDetails.state}</p>

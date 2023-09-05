@@ -73,3 +73,10 @@
     padding: 10px 20px;
     cursor: pointer;
   }
+
+  .group-image-placeholder{
+
+    border-radius: 10px;
+    margin: 10px 300px;
+    object-fit: cover;
+  }

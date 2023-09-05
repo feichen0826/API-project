@@ -4,6 +4,21 @@ import { fetchAllEventsAsync } from '../../store/eventReducer';
 import { Link, NavLink, Route, useParams} from 'react-router-dom';
 import './ViewEventsList.css';
 
+const formatDateAndTime = (dateTime) => {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+
+  const formattedDate = new Date(dateTime).toLocaleDateString(undefined, options);
+  const formattedTime = new Date(dateTime).toLocaleTimeString(undefined, options);
+
+  return `${formattedDate}`;
+};
+
 const ViewEventsList = () => {
   const dispatch = useDispatch();
   const eventsObj = useSelector((state) => state.event.events);
@@ -26,14 +41,15 @@ const ViewEventsList = () => {
   // if (!eventsObj.Event || eventsObj.Event.length === 0) {
   //   return null;
   // }
+  console.log(events)
 
   return (
     <div className="events-list-container">
        <nav className='events-groups'>
-        <div className='view-events-link'>
+        <div className='view-events-link2'>
           <NavLink to="/view-events" activeClassName='active-link'>Events</NavLink>
         </div>
-        <div className='view-groups-link'>
+        <div className='view-groups-link2'>
           <NavLink to="/view-groups" activeClassName='active-link'>Groups</NavLink>
         </div>
       </nav>
@@ -41,24 +57,36 @@ const ViewEventsList = () => {
         <p>Events in Meetup</p>
       </div>
 
-      <ul className="events-list">
+      <div className="events-list-box">
         {events.map((event) => (
-          <li key={event.id} className="event-item">
-            <NavLink to={`/events/${event.id}`}>
-            <div className="event-thumbnail">
-              <img src={event.previewImage} alt='' />
-            </div>
-            <div className="event-details">
-            <p>{event.startDate}  ·  {event.startTime}</p>
-              <h3>{event.name}</h3>
 
-              <p>{event.venue}</p>
-              <p>{event.description}</p>
-            </div>
+
+            <NavLink to={`/events/${event.id}`}>
+               <div className="event-item">
+            <div className="event-content">
+                <div className="event-thumbnail">
+                  <img src={event.previewImage} alt="" />
+
+                </div>
+                <div className="event-details">
+                  <p>{formatDateAndTime(event.startDate)}</p>
+                  <h2>{event.name}</h2>
+                  {event.Venue && event.Venue.city && event.Venue.state && (
+            <p>
+              Location: {event.Venue.city}, {event.Venue.state}
+            </p>
+          )}
+
+
+                </div>
+          </div>
+          </div>
+              <p className="event-description2">{event.description}</p>
+
             </ NavLink>
-          </li>
+
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

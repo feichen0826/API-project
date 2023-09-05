@@ -16,6 +16,7 @@ const ViewGroupsList = () => {
   if (allGroups.length === 0) {
     return null;
   }
+  console.log(allGroups)
 
   return (
     <div>
@@ -27,9 +28,9 @@ const ViewGroupsList = () => {
         <NavLink to="/view-groups" activeClassName='active-link'>Groups</NavLink>
         </div>
         </nav>
-        <div className='groups-in-meetup'>
-      <p>Groups in Meetup</p>
-      </div>
+          <div className='groups-in-meetup'>
+              <p>Groups in Meetup</p>
+          </div>
         {allGroups.Groups.map((group) => {
           return (
           <NavLink key={group.id} to={`/groups/${group.id}`}>

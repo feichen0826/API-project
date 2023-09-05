@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { createEventAsync } from '../../store/eventReducer';
 import ErrorMessage from './ErrorMessage';
 import { useHistory, useParams } from 'react-router-dom';
 import './CreateEventForm.css';
+import { fetchGroupDetailsAsync } from '../../store/groupReducer';
 
-const CreateEventForm = ({ group }) => {
+const CreateEventForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { groupId } = useParams();
-
   const [eventName, setEventName] = useState('');
   const [eventType, setEventType] = useState('');
   const [eventPrivacy, setEventPrivacy] = useState('');
@@ -21,6 +21,17 @@ const CreateEventForm = ({ group }) => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [eventCreated, setEventCreated] = useState(false);
+  const groupDetails = useSelector((state) => state.group.groupDetails);
+
+
+  useEffect(() => {
+    dispatch(fetchGroupDetailsAsync(groupId));
+  }, [dispatch, groupId]);
+
+  if(!groupDetails || groupDetails.length === 0){
+    return null
+  }
+  console.log(groupDetails)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,15 +130,18 @@ const CreateEventForm = ({ group }) => {
     }
   };
 
+
+
   return (
     <section className="create-event-form">
       <form onSubmit={handleSubmit}>
-        <h2>Create an event for {group}</h2>
+        <h2>Create an event for {groupDetails.name} </h2>
 
         <div className="form-group">
           <label htmlFor="eventName">What is the name of your event?</label>
           <input
             type="text"
+            className = 'create-event-input'
             id="eventName"
             name="eventName"
             value={eventName}
@@ -145,9 +159,7 @@ const CreateEventForm = ({ group }) => {
             <option value="Online">Online</option>
           </select>
           <ErrorMessage message={formErrors.eventType} />
-        </div>
 
-        <div className="form-group">
           <label>Is this event private or public?</label>
           <select name="eventPrivacy" value={eventPrivacy} onChange={handleChange}>
             <option value=""></option>
@@ -155,9 +167,7 @@ const CreateEventForm = ({ group }) => {
             <option value="Private">Private</option>
           </select>
           <ErrorMessage message={formErrors.eventPrivacy} />
-        </div>
 
-        <div className="form-group">
           <label>What is the price for your event?</label>
           <input
             type="number"
@@ -172,6 +182,7 @@ const CreateEventForm = ({ group }) => {
           <label>When does your event start?</label>
           <input
             type="text"
+            className = 'create-event-input'
             name="eventStartDate"
             value={eventStartDate}
             onChange={handleChange}
@@ -184,6 +195,7 @@ const CreateEventForm = ({ group }) => {
           <label>When does your event end?</label>
           <input
             type="text"
+            className = 'create-event-input'
             name="eventEndDate"
             value={eventEndDate}
             onChange={handleChange}
@@ -196,6 +208,7 @@ const CreateEventForm = ({ group }) => {
           <label>Please add in image URL for your event below:</label>
           <input
             type="text"
+            className = 'create-event-input'
             name="eventImageUrl"
             value={eventImageUrl}
             onChange={handleChange}
@@ -204,7 +217,7 @@ const CreateEventForm = ({ group }) => {
           <ErrorMessage message={formErrors.eventImageUrl} />
         </div>
 
-        <div className="form-group">
+        <div className="form-group4">
           <label>Please describe your event</label>
           <textarea
             name="eventDescription"
