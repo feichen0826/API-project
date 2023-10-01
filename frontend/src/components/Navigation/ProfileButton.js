@@ -5,6 +5,7 @@ import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
 import { useHistory } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
@@ -41,32 +42,22 @@ function ProfileButton({ user }) {
     closeMenu();
   };
 
-  const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
+  const ulClassName = `profile-dropdown ${showMenu ? 'profile-dropdown-absolute' : ''}`;
 
   return (
     <>
       <button onClick={openMenu}>
         <i className="fas fa-user-circle" />
       </button>
-      {/* {showMenu && (
-        <ul className={ulClassName} ref={ulRef}>
-          {user && (
-            <>
-              <li>Hello, {user.username}</li>
-              <li>{user.email}</li>
-              <li>
-                <button onClick={logout}>Log Out</button>
-              </li>
-            </>
-          )}
-        </ul>
-      )}
-    </>
-  );
-} */}
-      <ul className={ulClassName} ref={ulRef}>
+      <ul className={ulClassName} ref={ulRef} style={{ listStyleType: 'none' }}>
         {showMenu && user &&(
           <>
+             <li>
+               <Link to='/view-groups'>View groups</Link>
+             </li>
+              <li>
+                <Link to='/view-events'>View events</Link>
+              </li>
             <li>Hello, {user.username}</li>
             <li>{user.email}</li>
             <li>

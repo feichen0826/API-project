@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { createGroupAsync } from '../../store/groupReducer';
+import { createGroupAsync, uploadGroupImage } from '../../store/groupReducer';
 import ErrorMessage from './ErrorMessage';
 import './CreateGroupForm.css';
 
@@ -17,6 +17,7 @@ const CreateGroupForm = () => {
   const [groupType, setGroupType] = useState('');
   const [visibilityType, setVisibilityType] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,9 +40,13 @@ const CreateGroupForm = () => {
     if (!visibilityType) {
       errors.visibilityType = 'Visibility Type is required';
     }
-    if (!imageUrl.match(/\.(jpg|png)$/i)) {
+    // if (!imageUrl.match(/\.(jpg|png|jpeg)$/i)) {
+    //   errors.imageUrl = 'Image URL needs to end in jpg or png';
+    // }
+    if (!imageUrl) {
       errors.imageUrl = 'Image URL needs to end in jpg or png';
     }
+
 
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
@@ -56,7 +61,7 @@ const CreateGroupForm = () => {
       stateValue = splitLocation[1];
     } else {
 
-      if (location) {
+    if (location) {
         stateValue = location;
         cityValue = location
       }
@@ -72,16 +77,22 @@ const CreateGroupForm = () => {
       imageUrl,
     };
 
-   const  createdGroup = await dispatch(createGroupAsync(groupData))
-    console.log(createdGroup)
+  const  createdGroup = await dispatch(createGroupAsync(groupData))
 
+  console.log(createdGroup)
       if (createdGroup) {
+        const imageUploadResponse = await uploadGroupImage(createdGroup.id, imageUrl);
+
+        console.log(imageUploadResponse)
+        if (imageUploadResponse) {
         history.push(`/groups/${createdGroup.id}`);
       }
-
+    }
   };
 
-  const [errors, setErrors] = useState({});
+
+
+
 
   return (
     <section className="create-group-form">
@@ -120,8 +131,8 @@ const CreateGroupForm = () => {
         <div className="form-group2">
           <label htmlFor="about">Now describe what your group will be about</label>
           <p>People will see this when we promote your group, but you'll be able to add to it later, too.
-1, What's the purpose of the group? 2. Who should join?
-3. What will you do at your events?</p>
+          1, What's the purpose of the group? 2. Who should join?
+          3. What will you do at your events?</p>
           <textarea
             id="about"
             value={about}
@@ -161,9 +172,8 @@ const CreateGroupForm = () => {
 
           <p>Please add an image URL for your group below:</p>
           <input
-            type="text"
+            type="url"
             id="imageUrl"
-            value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
             className='create-group-input'
             placeholder='Image Url'

@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.delete('/:imageId', async (req, res) => {
     const imageId = req.params.imageId;
-    const userId = req.user.id; // Assuming you're using authentication middleware to attach user info
+    const userId = req.user.id;
 
     // Check if the image exists
     const eventImage = await EventImage.findOne({

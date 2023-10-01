@@ -14,6 +14,11 @@ const DELETE_GROUP_SUCCESS = 'group/deleteGroupSuccess';
 const DELETE_GROUP_FAILURE = 'group/deleteGroupFailure';
 const REMOVE_ITEM = "items/REMOVE_ITEM";
 
+const UPLOAD_IMAGE_REQUEST = 'group/uploadImageRequest';
+const UPLOAD_IMAGE_SUCCESS = 'group/uploadImageSuccess';
+const UPLOAD_IMAGE_FAILURE = 'group/uploadImageFailure';
+
+
 // Action creators
 const fetchAllGroups = (groups) => {
   return {
@@ -42,6 +47,21 @@ const createGroupFailure = (error) => ({
   type: CREATE_GROUP_FAILURE,
   error,
 });
+
+const uploadImageRequest = () => ({
+  type: UPLOAD_IMAGE_REQUEST,
+});
+
+const uploadImageSuccess = (uploadedImage) => ({
+  type: UPLOAD_IMAGE_SUCCESS,
+  uploadedImage,
+});
+
+const uploadImageFailure = (error) => ({
+  type: UPLOAD_IMAGE_FAILURE,
+  error,
+});
+
 
 const updateGroup = (groupData) => ({
   type: UPDATE_GROUP,
@@ -115,6 +135,30 @@ export const createGroupAsync = (groupData) => async (dispatch) => {
   }
 };
 
+export const uploadGroupImage = async ( groupId, imageUrl) => {
+
+
+   // dispatch(uploadImageRequest());
+    const response = await csrfFetch(`/api/groups/${groupId}/images`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url: imageUrl }),
+    });
+
+    if (response.ok) {
+      const uploadedImage = await response.json();
+      // dispatch(uploadImageSuccess(uploadedImage));
+      return uploadedImage;
+    } else {
+      console.error('Error uploading group image:', response.status, response.statusText);
+      //dispatch(uploadImageFailure('Error uploading group image'));
+      return { ok: false, statusText: 'Error uploading group image' };
+    }
+
+};
+
 export const updateGroupAsync = (groupData) => async (dispatch) => {
   try {
     const apiUrl = `/api/groups/${groupData.id}`;
@@ -160,9 +204,10 @@ export const deleteGroupAsync = (groupId) => async dispatch => {
 
 //Reducer
 const initialState = {
-  allGroups: [], // Initialize as an empty array
+  allGroups: [],
   createErrors: {},
   isLoading: false,
+  groupDetails: null
   };
 
   const groupReducer = (state = initialState, action) => {
@@ -186,6 +231,10 @@ const initialState = {
       case CREATE_GROUP_SUCCESS:
         return {
           ...state,
+          groupDetails: {
+            ...state.groupDetails,
+            ...action.payload,
+          },
           isLoading: false,
         };
       case CREATE_GROUP_FAILURE:
@@ -203,6 +252,13 @@ const initialState = {
           ...state,
 
         };
+
+      case UPLOAD_IMAGE_SUCCESS:
+
+          return {
+            ...state,
+            uploadedImage: action.uploadedImage,
+          };
 
       case REMOVE_ITEM:
         const newState = { ...state };

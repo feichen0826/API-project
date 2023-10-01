@@ -210,6 +210,10 @@ const validateMembership = [
         include: [
           { model: GroupImage },
           { model : Membership },
+          { model: Event,
+            attributes:['name', 'description','startDate','endDate'] ,
+            include:{model: EventImage}
+          },
           {
             model: User,
             as:'Organizer',
@@ -249,6 +253,7 @@ const validateMembership = [
         state: group.state,
         createdAt: group.createdAt,
         updatedAt: group.updatedAt,
+         Events: group.Events,
         numMembers: group.Memberships.length,
         GroupImages: group.GroupImages.map(image => ({
           id: image.id,
@@ -257,6 +262,7 @@ const validateMembership = [
         })),
         Organizer: group.Organizer,
         Venues: group.Venues,
+
       }
 
       res.status(200).json(groupDetails);
@@ -265,7 +271,8 @@ const validateMembership = [
 
   // Create a Group
   router.post('/', validateGroup, async (req, res) => {
-    const { name, about, type, private, city, state } = req.body;
+    const { name, about, type, private, city, state} = req.body;
+
 
       const newGroup = await Group.create({
         name,
@@ -274,7 +281,7 @@ const validateMembership = [
         private,
         city,
         state,
-        organizerId: req.user.id
+        organizerId: req.user.id,
       });
 
       return res.json(newGroup);

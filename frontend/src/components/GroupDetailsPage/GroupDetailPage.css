@@ -1,5 +1,7 @@
 /* GroupDetailPage.css */
-
+ .background-grey{
+  background-color: #ededed;
+ }
 .group-detail-container {
     display: flex;
     flex-direction: column;
@@ -79,4 +81,30 @@
     border-radius: 10px;
     margin: 10px 300px;
     object-fit: cover;
+  }
+
+  .upcoming-event{
+
+
+    margin: 30px 80px 0px 80px
+  }
+
+  .upcoming-event-card{
+
+    display: grid;
+    grid-template-columns: 1.5fr 4fr;
+    margin-bottom: 20px;
+
+  }
+
+  .upcoming-event-container {
+    width: 450px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+  }
+
+  .upcoming-event-image{
+    width: 100px;
   }

@@ -66,17 +66,12 @@ export const createEventAsync = (groupId, eventData) => async (dispatch) => {
 
     if (response.ok) {
       const createdEvent = await response.json();
-      // console.log('createdEvent:', createdEvent);
-      // const eventsArray = Object.values(createdEvent.Event || {});
-
-      // dispatch(createEvent(eventsArray));
       dispatch(createEvent(createdEvent));
 
       return createdEvent
     } else {
       const errors = await response.json()
       return errors
-      // console.error('Failed to create the event');
     }
   };
 

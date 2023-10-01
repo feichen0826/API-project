@@ -27,7 +27,7 @@ const EventDetailPage = () => {
   const { eventId } = useParams();
   const eventDetails = useSelector((state) => state.event.eventDetails);
   const currentUser = useSelector((state) => state.session);
-  console.log(eventDetails)
+
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
 
@@ -40,9 +40,11 @@ const EventDetailPage = () => {
     return <div>Loading...</div>;
   }
   if (!eventDetails.Group) {
-    return <div>Event details are incomplete.</div>;
+    return null;
   }
   const isCurrentUserLoggedIn = currentUser && currentUser.user;
+  const isCurrentUserEventOrganizer =
+  isCurrentUserLoggedIn && currentUser.user.id === eventDetails.Group.organizerId;
 
   const handleDeleteEvent = async () => {
     try {
@@ -97,20 +99,28 @@ const EventDetailPage = () => {
                 <i className="fas fa-money-bill-wave"></i> {price === 0 ? 'FREE' : `$${price}`}
               </div>
               <div className="event-info-item">
-                <i className="fas fa-map-pin"></i> {venue}
+                <i className="fas fa-map-pin"></i> {eventDetails.type}
               </div>
               {isCurrentUserLoggedIn && currentUser.user.id === Group.organizerId && (
-        <div className="event-actions">
-          <button className="dark-grey-button" onClick={() => setConfirmationModalOpen(true)}>Delete</button>
-        {isConfirmationModalOpen && (
-        <DeleteEventConfirmationModel
-          title="Confirm Delete"
-          message="Are you sure you want to remove this event?"
-          onConfirm={handleDeleteEvent}
-          onCancel={() => setConfirmationModalOpen(false)}
-        />
+      <div className="event-actions">
+      {isCurrentUserEventOrganizer && (
+        <>
+          <button className="dark-grey-button" onClick={() => setConfirmationModalOpen(true)}>
+            Delete
+          </button>
+          {/* Add an "Update" button here */}
+          <button className="dark-grey-button">Update</button>
+          {isConfirmationModalOpen && (
+            <DeleteEventConfirmationModel
+              title="Confirm Delete"
+              message="Are you sure you want to remove this event?"
+              onConfirm={handleDeleteEvent}
+              onCancel={() => setConfirmationModalOpen(false)}
+            />
+          )}
+        </>
       )}
-        </div>
+    </div>
       )}
             </div>
             </div>

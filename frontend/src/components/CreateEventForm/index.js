@@ -193,7 +193,7 @@ const CreateEventForm = () => {
         <div className="form-group">
           <label>When does your event start?</label>
           <input
-            type="text"
+            type="datetime-local"
             className = 'create-event-input'
             name="eventStartDate"
             value={eventStartDate}
@@ -206,7 +206,7 @@ const CreateEventForm = () => {
         <div className="form-group">
           <label>When does your event end?</label>
           <input
-            type="text"
+            type="datetime-local"
             className = 'create-event-input'
             name="eventEndDate"
             value={eventEndDate}
@@ -219,7 +219,7 @@ const CreateEventForm = () => {
         <div className="form-group">
           <label>Please add in image URL for your event below:</label>
           <input
-            type="text"
+            type="url"
             className = 'create-event-input'
             name="eventImageUrl"
             value={eventImageUrl}

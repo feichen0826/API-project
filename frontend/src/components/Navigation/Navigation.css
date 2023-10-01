@@ -48,7 +48,7 @@
     margin-left: 10px;
   }
 
-  /* Updated style for the "Sign Up" button with teal background and white text */
+
   .navbar-auth a.teal-button {
     background-color: teal;
     color: #fff;
@@ -65,8 +65,16 @@
     margin-left: 10px;
   }
 
-  /* Optional: Add styles for the active link (if using NavLink) */
   .navbar-nav a.active {
     text-decoration: underline;
     font-weight: bold;
+  }
+
+  .profile-dropdown-absolute {
+    position: absolute;
+    padding: 20px;
+    top: 100%;
+    background-color: white;
+    border: 1px solid #ccc;
+
   }
