@@ -92,7 +92,7 @@ const GroupDetailPage = () => {
     <div className="group-detail-container">
       <Link className="breadcrumb-link" to="/view-groups"> Groups </Link>
     <div className="group-detail-header">
-    {groupDetails.GroupImages[0] ? (
+    {groupDetails && groupDetails.GroupImages && groupDetails.GroupImages[0] ? (
           <img className="group-image" src={groupDetails?.GroupImages[0]?.url} alt={groupDetails.name} />
         ) : (
           <div className="group-image-placeholder">No Image</div>
@@ -101,7 +101,7 @@ const GroupDetailPage = () => {
         <h2>{groupDetails.name}</h2>
         <p>{groupDetails.city}, {groupDetails.state}</p>
         <p>{groupEvents.length} events · {groupDetails.type === 'In person' ? 'Public' : 'Private'}</p>
-        <p>Organized by: {groupDetails.Organizer.firstName} {groupDetails.Organizer.lastName}</p>
+        <p>Organized by: {groupDetails.Organizer && `${groupDetails.Organizer.firstName} ${groupDetails.Organizer.lastName}`}</p>
 
 
 
