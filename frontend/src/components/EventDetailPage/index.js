@@ -7,18 +7,24 @@ import { deleteEventAsync } from '../../store/eventReducer';
 import './EventDetailPage.css';
 
 const formatDateAndTime = (dateTime) => {
-  const options = {
+  const dateOptions = {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
   };
 
-  const formattedDate = new Date(dateTime).toLocaleDateString(undefined, options);
-  const formattedTime = new Date(dateTime).toLocaleTimeString(undefined, options);
+  const timeOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  };
 
-  return `${formattedDate} `;
+  const date = new Date(dateTime);
+
+  const formattedDate = date.toLocaleDateString(undefined, dateOptions);
+  const formattedTime = date.toLocaleTimeString(undefined, timeOptions);
+
+  return `${formattedDate}  ·  ${formattedTime}`;
 };
 
 const EventDetailPage = () => {
@@ -57,7 +63,7 @@ const EventDetailPage = () => {
 
   const { name, startDate, startTime, endDate, endTime, price, venue, description, Group } = eventDetails;
 
-  // console.log(eventDetails.Group.GroupImages[0].url)
+  console.log(eventDetails)
 
   return (
     <div className="event-detail-container">
@@ -96,10 +102,10 @@ const EventDetailPage = () => {
                 END: {formatDateAndTime(endDate)}
               </div>
               <div className="event-info-item">
-                <i className="fas fa-money-bill-wave"></i> {price === 0 ? 'FREE' : `$${price}`}
+                <i className="fas fa-money-bill-wave"></i> {price == 0 ? 'FREE' : `$${price}`}
               </div>
               <div className="event-info-item">
-                <i className="fas fa-map-pin"></i> {eventDetails.type}
+                <i className="fas fa-map-pin"></i> {eventDetails.type === 'Online' ? 'Online' : eventDetails.Group.city }
               </div>
               {isCurrentUserLoggedIn && currentUser.user.id === Group.organizerId && (
       <div className="event-actions">

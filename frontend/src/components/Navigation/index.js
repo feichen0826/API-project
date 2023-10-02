@@ -1,6 +1,6 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { NavLink} from "react-router-dom";
+import { useSelector} from "react-redux";
 import ProfileButton from "./ProfileButton";
 import OpenModalButton from "../OpenModalButton";
 import LoginFormModal from "../LoginFormModal";
@@ -10,12 +10,18 @@ import "./Navigation.css";
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector((state) => state.session.user);
 
+  useEffect(() => {
+
+    document.title = "MeetHub";
+  }, []);
+
+
   return (
 
   <nav className="navbar">
       <div className="navbar-logo">
         <NavLink exact to="/">
-          MeetUs
+        MeetHub
         </NavLink>
       </div>
 

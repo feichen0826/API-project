@@ -5,6 +5,7 @@ const FETCH_ALL_EVENTS = 'event/fetchAllEvents';
 const FETCH_EVENT_DETAILS = 'event/fetchEventDetails';
 const CREATE_EVENT = 'event/createEvent';
 const DELETE_EVENT = 'event/deleteEvent';
+const UPLOAD_EVENT_IMAGE_SUCCESS = 'eventImage/uploadSuccess';
 // Action creator
 const fetchAllEvents = (events) => {
   return {
@@ -31,6 +32,13 @@ export const deleteEvent = (eventId) => {
   return {
     type: DELETE_EVENT,
     eventId,
+  };
+};
+
+const uploadEventImageSuccess = (image) => {
+  return {
+    type: UPLOAD_EVENT_IMAGE_SUCCESS,
+    image,
   };
 };
 
@@ -62,11 +70,14 @@ export const createEventAsync = (groupId, eventData) => async (dispatch) => {
       },
       body: JSON.stringify(eventData),
     });
-    console.log(response)
+
 
     if (response.ok) {
       const createdEvent = await response.json();
-      dispatch(createEvent(createdEvent));
+      const imageUploadResponse = await dispatch(
+        uploadEventImageAsync(createdEvent.id, eventData.imageUrl)
+      );
+
 
       return createdEvent
     } else {
@@ -74,6 +85,33 @@ export const createEventAsync = (groupId, eventData) => async (dispatch) => {
       return errors
     }
   };
+
+  export const uploadEventImageAsync = (eventId, imageUrl) => async (dispatch) => {
+    try {
+      const response = await csrfFetch(`/api/events/${eventId}/images`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: imageUrl }),
+      });
+
+      if (!response.ok) {
+        const errors = await response.json();
+        console.error('Image upload failed:', errors);
+        return { ok: false, errors };
+      }
+
+      const uploadedImage = await response.json();
+      dispatch(uploadEventImageSuccess(uploadedImage));
+
+      return { ok: true, uploadedImage };
+    } catch (error) {
+      console.error('Error uploading event image:', error);
+      throw error;
+    }
+  };
+
 
   export const deleteEventAsync = (eventId) => async (dispatch) => {
     try {

@@ -41,6 +41,13 @@ const ViewEventsList = () => {
   // if (!eventsObj.Event || eventsObj.Event.length === 0) {
   //   return null;
   // }
+  const formattedEvents = events.map((event) => ({
+    ...event,
+    startDate: new Date(event.startDate),
+  }));
+
+  // Sort the events array by date
+  const sortedEvents = formattedEvents.sort((a, b) =>  b.startDate - a.startDate);
   console.log(events)
 
   return (
@@ -58,7 +65,7 @@ const ViewEventsList = () => {
       </div>
 
       <div className="events-list-box">
-        {events.map((event) => (
+        {sortedEvents.map((event) => (
 
 
             <NavLink to={`/events/${event.id}`}>
@@ -71,11 +78,15 @@ const ViewEventsList = () => {
                 <div className="event-details">
                   <p>{formatDateAndTime(event.startDate)}</p>
                   <h2>{event.name}</h2>
-                  {event.Venue && event.Venue.city && event.Venue.state && (
-            <p>
-              Location: {event.Venue.city}, {event.Venue.state}
-            </p>
-          )}
+                  {event.type === 'Online' ? (
+                    <p>Location: Online</p>
+                  ) : (
+                    (
+                      <p>
+                        Location: {event.Venue?.city || event.Group.city}, {event.Venue?.state || ''}
+                      </p>
+                    )
+                  )}
 
 
                 </div>

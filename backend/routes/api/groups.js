@@ -211,7 +211,7 @@ const validateMembership = [
           { model: GroupImage },
           { model : Membership },
           { model: Event,
-            attributes:['name', 'description','startDate','endDate'] ,
+            attributes:['id', 'type', 'name', 'description','startDate','endDate'] ,
             include:{model: EventImage}
           },
           {
@@ -464,6 +464,7 @@ router.put('/:groupId', validateGroup, async (req, res) => {
 
         const events = await Event.findAll({
           where: { groupId: groupId },
+           attributes: ['id', 'name', 'type', 'startDate', 'endDate', 'description', 'groupId'],
           include: [
             {
               model: Group,

@@ -8,18 +8,24 @@ import { useHistory } from 'react-router-dom';
 import DeleteConfirmationModal from '../DeleteConfirmationModal';
 
 const formatDateAndTime = (dateTime) => {
-  const options = {
+  const dateOptions = {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
   };
 
-  const formattedDate = new Date(dateTime).toLocaleDateString(undefined, options);
-  const formattedTime = new Date(dateTime).toLocaleTimeString(undefined, options);
+  const timeOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  };
 
-  return `${formattedDate} `;
+  const date = new Date(dateTime);
+
+  const formattedDate = date.toLocaleDateString(undefined, dateOptions);
+  const formattedTime = date.toLocaleTimeString(undefined, timeOptions);
+
+  return `${formattedDate}  ·  ${formattedTime}`;
 };
 
 const GroupDetailPage = () => {
@@ -29,6 +35,8 @@ const GroupDetailPage = () => {
   const { groupId } = useParams();
   const groupDetails = useSelector((state) => state.group.groupDetails);
   const currentUser = useSelector((state) => state.session);
+  const eventDetails = useSelector((state) => state);
+  console.log(groupDetails)
 
 
 
@@ -64,11 +72,11 @@ const GroupDetailPage = () => {
   };
 
 
-  const groupEvents = groupDetails.Events
-  console.log(groupDetails)
+  const groupEvents = groupDetails.Events || [];
+  console.log(groupEvents)
 
 
-   const sortedEvents = groupDetails.Events.sort((a, b) => {
+   const sortedEvents = groupEvents.slice().sort((a, b) => {
     const dateA = new Date(a.startDate);
     const dateB = new Date(b.startDate);
     return dateA - dateB;
@@ -130,7 +138,7 @@ const GroupDetailPage = () => {
 
       {groupEvents.map((ele, index) => (
         <div className='upcoming-event-container' key={index}>
-          <Link to={`/events/${index + 1}`}>
+          <Link to={`/events/${ele.id}`}>
          <div className='upcoming-event-card'>
           <div className='upcoming-event-image'>
           {ele.EventImages && ele.EventImages.length > 0 ? (
