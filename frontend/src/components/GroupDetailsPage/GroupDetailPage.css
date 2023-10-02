@@ -107,4 +107,9 @@
 
   .upcoming-event-image{
     width: 100px;
+    height: 100px;
+  }
+
+  .past-event-image{
+    width: 100px;
   }

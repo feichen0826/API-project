@@ -83,7 +83,7 @@ const GroupDetailPage = () => {
   });
 
 
-  const upcomingEvents = sortedEvents.filter((event) => new Date(event.startDate) >= new Date());
+  const upcomingEvents = sortedEvents.filter((event) => new Date(event.startDate) > new Date());
   const pastEvents = sortedEvents.filter((event) => new Date(event.startDate) < new Date());
   console.log(groupEvents)
 
@@ -135,8 +135,8 @@ const GroupDetailPage = () => {
 
     <div className='upcoming-event'>
       <h3>Upcoming Events({upcomingEvents.length})</h3>
-
-      {groupEvents.map((ele, index) => (
+      {upcomingEvents.length > 0 && (
+      groupEvents.map((ele, index) => (
         <div className='upcoming-event-container' key={index}>
           <Link to={`/events/${ele.id}`}>
          <div className='upcoming-event-card'>
@@ -150,7 +150,7 @@ const GroupDetailPage = () => {
           <div className='groupEvent-info'>
            <p className='groupEvent-startDate'>{formatDateAndTime(ele.startDate)}</p>
            <p>{ele.name}</p>
-           <p>{ele.venue}</p>
+           <p>{groupDetails.city}</p>
           </div>
 
 
@@ -158,27 +158,33 @@ const GroupDetailPage = () => {
         <p>{ele.description}</p>
         </Link>
         </div>
-      ))}
+      ))
+      )}
        <h3>Past Events ({pastEvents.length})</h3>
 
-  {pastEvents.map((event, index) => (
+  {pastEvents.map((ele, index) => (
     <div className="upcoming-event-container" key={index}>
-      <div className="upcoming-event-card">
-        <div className="upcoming-event-image">
-          <img src={event.EventImages[0]} alt="" />
+      <Link to={`/events/${ele.id}`}>
+      <div className='upcoming-event-card'>
+      <div className='upcoming-event-image'>
+      {ele.EventImages && ele.EventImages.length > 0 ? (
+            <img className= "upcoming-event-image" src={ele.EventImages[0].url} alt='' />
+          ) : (
+            <p>No Image Available</p>
+          )}
         </div>
         <div className="groupEvent-info">
-          <p className="groupEvent-startDate">
-            {formatDateAndTime(event.startDate)}
-          </p>
-          <p>{event.name}</p>
-          <p>{event.venue}</p>
+          <p className="groupEvent-startDate">{formatDateAndTime(ele.startDate)}</p>
+          <p>{ele.name}</p>
+          <p>{groupDetails.city}</p>
+          </div>
         </div>
-        <p>{event.description}</p>
-      </div>
+        <p>{ele.description}</p>
+        </Link>
     </div>
   ))}
     </div>
+    )}
   </div>
   </div>
   );
